@@ -22,6 +22,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
     private AndVersionContract.View mView;
     private OkHttpClient mClient;
+    private JsonParseHelper mJsonParseHelper;
 
     @Inject
     AndVersionPresenter() {
@@ -32,6 +33,11 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     @Inject
     void setClient( OkHttpClient client ) {
         this.mClient = client;
+    }
+
+    @Inject
+    void setJsonParseHelper( JsonParseHelper jsonParseHelper ) {
+        this.mJsonParseHelper = jsonParseHelper;
     }
 
 

@@ -14,4 +14,9 @@ public class AndVersionModule {
     OkHttpClient providesOkHttpClient() {
         return new OkHttpClient();
     }
+
+    @Provides
+    JsonParseHelper provideJsonParseHelper() {
+        return new JsonParseHelper();
+    }
 }
