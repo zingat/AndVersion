@@ -9,6 +9,10 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.zingat.andversion.Ismail;
+
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -26,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
                         .setAction( "Action", null ).show();
             }
         } );
+
+        Ismail ismail = new Ismail( this );
+        try {
+            ismail.checkUpdate( "https://firebasestorage.googleapis.com/v0/b/zingat-libs.appspot.com/o/forceupdate.json?alt=media&token=17b74a5f-7a3a-4a52-a5d7-4208b85d3913" );
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
     }
 
     @Override
