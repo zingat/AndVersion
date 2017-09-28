@@ -5,4 +5,5 @@ package com.zingat.andversion;
  */
 
 public class JsonParseHelper {
+
 }
