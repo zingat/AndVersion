@@ -34,10 +34,6 @@ public class Ismail implements AndVersionContract.View {
 
     }
 
-    public void textIsmail() {
-
-    }
-
     @Override
     public void makeToast( final String response ) {
 
