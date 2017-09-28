@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -55,30 +56,37 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                 .url( url )
                 .build();
 
-        final String[] stResponse = new String[1];
 
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( Call call, IOException e ) {
-                stResponse[0] = "Hata";
-                mView.makeToast( stResponse[0] );
+                mView.makeToast( "Hata" );
             }
 
             @Override
             public void onResponse( Call call, Response response ) throws IOException {
 
                 ResponseBody responseBody = response.body();
+                Integer minVersion;
+                Integer currentVersion;
+                ArrayList< String > trWhatsNew;
 
-                try {
-                    JSONObject jsonObject = new JSONObject( responseBody.string() );
-                    JSONObject andVersionObject = jsonObject.getJSONObject( "AndVersion" );
-                    stResponse[0] = String.valueOf( andVersionObject.getInt( "MinVersion" ) );
-                    mView.makeToast( stResponse[0] );
-                } catch ( JSONException e ) {
-                    e.printStackTrace();
+                if ( responseBody != null ) {
+                    try {
+                        mJsonParseHelper.setResponseObjcet( new JSONObject( responseBody.string() ) );
+                        minVersion = mJsonParseHelper.getMinSuppertVersion();
+                        currentVersion = mJsonParseHelper.getCurrentVersion();
+                        trWhatsNew = mJsonParseHelper.getTrWhatsNew();
+                        String features = "";
+                        for ( int i = 0; i < trWhatsNew.size(); i++ ) {
+                            features = features + " " + trWhatsNew.get( i ) + "\n";
+                        }
+                        mView.makeToast( "" + minVersion + " " + currentVersion + "\n" + features );
+
+                    } catch ( JSONException e ) {
+                        e.printStackTrace();
+                    }
                 }
-
-
             }
         } );
 
