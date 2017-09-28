@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 ext {
-    bintrayRepo = 'maven'
+    bintrayRepo = 'AndVersion'
     bintrayName = 'andversion'
 
     publishedGroupId = 'com.zingat'
