@@ -1,5 +1,29 @@
 apply plugin: 'com.android.library'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'andversion'
+
+    publishedGroupId = 'com.zingat'
+    libraryName = 'Andversion'
+    artifact = 'andversion'
+
+    libraryDescription = 'Provides version system and force update by using Firebase storage for Android devices.'
+
+    siteUrl = 'https://github.com/olkunmustafa/AndVersion'
+    gitUrl = 'https://github.com/olkunmustafa/AndVersion.git'
+
+    libraryVersion = '0.1.0'
+
+    developerId = 'mustafaolkun'
+    developerName = 'Mustafa Olkun'
+    developerEmail = 'olkun.mustafa@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -29,3 +53,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
 }
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
