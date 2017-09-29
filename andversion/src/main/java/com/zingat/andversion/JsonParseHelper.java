@@ -15,25 +15,20 @@ import java.util.ArrayList;
 public class JsonParseHelper {
 
 
-    private JSONObject responseObjcet;
     private JSONObject andVersionObject;
 
-    public void setResponseObjcet( JSONObject responseObjcet ) {
-        this.responseObjcet = responseObjcet;
-        setAndVerisonObject( responseObjcet );
-    }
-
-    public void setAndVerisonObject( JSONObject responseObjcet ) {
-
+    public void setAndVersionObject( JSONObject responseObjcet )  {
         try {
             this.andVersionObject = responseObjcet.getJSONObject( Constants.ANDVERSION_OBJECT );
+
         } catch ( JSONException e ) {
             e.printStackTrace();
+
         }
 
     }
 
-    public int getMinSuppertVersion() {
+    public int getMinSupportVersion() {
 
         try {
             return this.andVersionObject.getInt( Constants.MIN_VERSION_OBJECT );
@@ -64,8 +59,10 @@ public class JsonParseHelper {
             for ( int i = 0; i < trWhatsNewJsonArray.length(); i++ ) {
                 trWhatsNewArray.add( trWhatsNewJsonArray.get( i ).toString() );
             }
+
         } catch ( JSONException e ) {
             e.printStackTrace();
+
         }
 
         return trWhatsNewArray;

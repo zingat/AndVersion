@@ -27,8 +27,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
     @Inject
     AndVersionPresenter() {
-
-
+        // Silent is golden.
     }
 
     @Inject
@@ -67,20 +66,19 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
             public void onResponse( Call call, Response response ) throws IOException {
 
                 ResponseBody responseBody = response.body();
-                Integer minVersion;
-                Integer currentVersion;
-                ArrayList< String > trWhatsNew;
 
                 if ( responseBody != null ) {
                     try {
-                        mJsonParseHelper.setResponseObjcet( new JSONObject( responseBody.string() ) );
-                        minVersion = mJsonParseHelper.getMinSuppertVersion();
-                        currentVersion = mJsonParseHelper.getCurrentVersion();
-                        trWhatsNew = mJsonParseHelper.getTrWhatsNew();
+                        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
+                        int minVersion = mJsonParseHelper.getMinSupportVersion();
+                        int currentVersion = mJsonParseHelper.getCurrentVersion();
+                        ArrayList<String> trWhatsNew = mJsonParseHelper.getTrWhatsNew();
+
                         String features = "";
                         for ( int i = 0; i < trWhatsNew.size(); i++ ) {
                             features = features + " " + trWhatsNew.get( i ) + "\n";
                         }
+
                         mView.makeToast( "" + minVersion + " " + currentVersion + "\n" + features );
 
                     } catch ( JSONException e ) {

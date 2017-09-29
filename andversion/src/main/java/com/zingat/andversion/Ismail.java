@@ -29,8 +29,12 @@ public class Ismail implements AndVersionContract.View {
 
     }
 
-    public void checkUpdate( String url ) throws IOException {
-        this.mPresenter.getJsonFromUrl( url );
+    public void checkUpdate( String url ) {
+        try {
+            this.mPresenter.getJsonFromUrl( url );
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
 
     }
 
