@@ -11,6 +11,6 @@ import dagger.Component;
 @Component( modules = { AndVersionModule.class } )
 public interface AndVersionComponent {
 
-    void inject( Ismail ısmail );
+    void inject( AndVersion andVersion );
 
 }

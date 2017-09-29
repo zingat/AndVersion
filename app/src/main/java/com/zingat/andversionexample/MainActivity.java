@@ -9,9 +9,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.zingat.andversion.Ismail;
-
-import java.io.IOException;
+import com.zingat.andversion.AndVersion;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,8 +29,20 @@ public class MainActivity extends AppCompatActivity {
             }
         } );
 
-        Ismail ismail = new Ismail( this );
-        ismail.checkUpdate( "https://firebasestorage.googleapis.com/v0/b/zingat-libs.appspot.com/o/forceUpdate.json?alt=media&token=b8c8d41f-58f7-45d9-aec1-8195619adf39" );
+         }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AndVersion andVersion = new AndVersion( this );
+        andVersion.checkUpdate( "https://firebasestorage.googleapis.com/v0/b/zingat-libs.appspot.com/o/forceUpdate.json?alt=media&token=62bcc80a-820f-4de8-b1bf-fe1b898f85a1" );
+
     }
 
     @Override

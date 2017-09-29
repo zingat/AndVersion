@@ -16,7 +16,7 @@ public interface AndVersionContract {
 
         void showForceUpdateDialogs( String whatsNew, String packageName );
 
-        void checkLastSessionVersion( String features );
+        void checkLastSessionVersion( String features, int currentUdateVersion );
 
         void showUpdateFeatures( String features );
 
@@ -30,8 +30,9 @@ public interface AndVersionContract {
 
         void setPackageInfoForPresenter( Activity activity );
 
-        void checkLastSessionVersion( Activity activity, String features );
+        void checkLastSessionVersion( Activity activity, String features, int currentUpdateVersion );
 
+        void sendUserToGooglePlay();
 
     }
 }

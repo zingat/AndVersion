@@ -2,9 +2,11 @@ package com.zingat.andversion;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 
 import com.zingat.andversion.constants.Constants;
@@ -37,6 +39,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     private int currentVersionCode;
     private int lastSessionVersion;
     private String packageName;
+    private Activity activity;
 
     @Inject
     AndVersionPresenter() {
@@ -66,8 +69,8 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     public void setPackageInfoForPresenter( Activity activity ) {
 
         try {
-
-            PackageInfo packageInfo = activity.getPackageManager().getPackageInfo( activity.getPackageName(), 0 );
+            this.activity = activity;
+            PackageInfo packageInfo = this.activity.getPackageManager().getPackageInfo( activity.getPackageName(), 0 );
             this.currentVersionName = packageInfo.versionName;
             this.currentVersionCode = packageInfo.versionCode;
             this.packageName = packageInfo.packageName;
@@ -79,38 +82,36 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void checkLastSessionVersion( Activity activity, String features ) {
+    public void checkLastSessionVersion( Activity activity, String features, int currentUpdateVersion ) {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( activity );
         this.lastSessionVersion = preferences.getInt( Constants.LAST_SESSION_VERSION, 0 );
 
         SharedPreferences.Editor editor = preferences.edit();
 
+        if ( this.lastSessionVersion != this.currentVersionCode ) {
 
-        if ( this.lastSessionVersion == this.currentVersionCode ) {
+            if ( this.lastSessionVersion != 0 && this.currentVersionCode <= currentUpdateVersion && this.currentVersionCode == currentUpdateVersion ) {
 
-            mView.makeToast( "Uygulamanız Güncel!" );
-
-        } else {
-
-            if ( this.lastSessionVersion == 0 ) {
-
-                this.lastSessionVersion = this.currentVersionCode;
-                editor.putInt( Constants.LAST_SESSION_VERSION, this.lastSessionVersion );
-                editor.apply();
-                mView.makeToast( "Uygulamanız Güncel !" );
-
-            } else {
-
-                this.lastSessionVersion = this.currentVersionCode;
-                editor.putInt( Constants.LAST_SESSION_VERSION, this.lastSessionVersion );
-                editor.apply();
                 mView.showUpdateFeatures( features );
 
-
             }
+
+            this.lastSessionVersion = this.currentVersionCode;
+            editor.putInt( Constants.LAST_SESSION_VERSION, this.lastSessionVersion );
+            editor.apply();
+
         }
 
+    }
+
+    @Override
+    public void sendUserToGooglePlay() {
+        try {
+            this.activity.startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=" + "com.zingat.emlak" ) ) );
+        } catch ( android.content.ActivityNotFoundException anfe ) {
+            this.activity.startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( "https://play.google.com/store/apps/details?id=" + "com.zingat.emlak" ) ) );
+        }
     }
 
     @Override
@@ -141,7 +142,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
                         String features = "";
                         for ( int i = 0; i < trWhatsNew.size(); i++ ) {
-                            features = features + " " + trWhatsNew.get( i ) + "\n";
+                            features = features + "- " + trWhatsNew.get( i ) + "\n";
                         }
 
                         if ( currentUpdateVersion != -1 && minSupportVersion != -1 ) {
@@ -150,7 +151,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                                 mView.showForceUpdateDialogs( features, packageName );
                             } else {
 
-                                mView.checkLastSessionVersion( features );
+                                mView.checkLastSessionVersion( features, currentUpdateVersion );
 
                             }
 

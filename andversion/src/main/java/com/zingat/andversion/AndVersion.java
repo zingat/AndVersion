@@ -18,14 +18,14 @@ import javax.inject.Inject;
  * Created by ismailgungor on 28.09.2017.
  */
 
-public class Ismail implements AndVersionContract.View {
+public class AndVersion implements AndVersionContract.View {
 
     private Activity activity;
 
     @Inject
     AndVersionPresenter mPresenter;
 
-    public Ismail( Activity activity ) {
+    public AndVersion( Activity activity ) {
         this.activity = activity;
         DaggerAndVersionComponent.builder()
                 .andVersionModule( new AndVersionModule() )
@@ -52,6 +52,7 @@ public class Ismail implements AndVersionContract.View {
         activity.runOnUiThread( new Runnable() {
             @Override
             public void run() {
+
                 Toast.makeText( activity, response, Toast.LENGTH_SHORT ).show();
 
             }
@@ -83,11 +84,7 @@ public class Ismail implements AndVersionContract.View {
                             @Override
                             public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
 
-                                try {
-                                    activity.startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=" + "com.zingat.emlak" ) ) );
-                                } catch ( android.content.ActivityNotFoundException anfe ) {
-                                    activity.startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( "https://play.google.com/store/apps/details?id=" + "com.zingat.emlak" ) ) );
-                                }
+                                mPresenter.sendUserToGooglePlay();
 
                             }
                         } )
@@ -99,19 +96,25 @@ public class Ismail implements AndVersionContract.View {
     }
 
     @Override
-    public void checkLastSessionVersion( String features ) {
-        mPresenter.checkLastSessionVersion( this.activity, features );
+    public void checkLastSessionVersion( String features, int currentUpdateVersion ) {
+        mPresenter.checkLastSessionVersion( this.activity, features, currentUpdateVersion );
     }
 
     @Override
-    public void showUpdateFeatures( String features ) {
+    public void showUpdateFeatures( final String features ) {
 
-        new MaterialDialog.Builder( activity )
-                .cancelable( false )
-                .title( activity.getString( R.string.title_after_update ) )
-                .content( features )
-                .positiveText( "Tamam" )
-                .show();
+        activity.runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+
+                new MaterialDialog.Builder( activity )
+                        .cancelable( false )
+                        .title( activity.getString( R.string.title_after_update ) )
+                        .content( features )
+                        .positiveText( "Tamam" )
+                        .show();
+            }
+        } );
 
 
     }
