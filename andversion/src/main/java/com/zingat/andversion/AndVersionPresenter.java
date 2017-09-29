@@ -1,5 +1,9 @@
 package com.zingat.andversion;
 
+import android.app.Activity;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +28,8 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     private AndVersionContract.View mView;
     private OkHttpClient mClient;
     private JsonParseHelper mJsonParseHelper;
+    private String currentVersionName;
+    private int currentVersionCode;
 
     @Inject
     AndVersionPresenter() {
@@ -45,6 +51,22 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     public void setView( AndVersionContract.View view ) {
 
         this.mView = view;
+
+    }
+
+
+    @Override
+    public void setPackageInfoForPresenter( Activity activity ) {
+
+        try {
+
+            PackageInfo packageInfo = activity.getPackageManager().getPackageInfo( activity.getPackageName(), 0 );
+            this.currentVersionName = packageInfo.versionName;
+            this.currentVersionCode = packageInfo.versionCode;
+
+        } catch ( PackageManager.NameNotFoundException e ) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -72,14 +94,14 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                         mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
                         int minVersion = mJsonParseHelper.getMinSupportVersion();
                         int currentVersion = mJsonParseHelper.getCurrentVersion();
-                        ArrayList<String> trWhatsNew = mJsonParseHelper.getTrWhatsNew();
+                        ArrayList< String > trWhatsNew = mJsonParseHelper.getTrWhatsNew();
 
                         String features = "";
                         for ( int i = 0; i < trWhatsNew.size(); i++ ) {
                             features = features + " " + trWhatsNew.get( i ) + "\n";
                         }
 
-                        mView.makeToast( "" + minVersion + " " + currentVersion + "\n" + features );
+                        mView.makeToast( "" + minVersion + " " + currentVersion + "\n" + features + "\n" + currentVersionName + "\t" + currentVersionCode );
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();
@@ -90,4 +112,5 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
 
     }
+
 }

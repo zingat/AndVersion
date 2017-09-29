@@ -1,5 +1,7 @@
 package com.zingat.andversion;
 
+import android.app.Activity;
+
 import java.io.IOException;
 
 /**
@@ -19,6 +21,8 @@ public interface AndVersionContract {
         void setView( View view );
 
         void getJsonFromUrl( String url ) throws IOException;
+
+        void setPackageInfoForPresenter( Activity activity );
 
     }
 }

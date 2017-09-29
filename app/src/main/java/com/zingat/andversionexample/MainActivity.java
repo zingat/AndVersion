@@ -32,11 +32,7 @@ public class MainActivity extends AppCompatActivity {
         } );
 
         Ismail ismail = new Ismail( this );
-        try {
-            ismail.checkUpdate( "https://firebasestorage.googleapis.com/v0/b/zingat-libs.appspot.com/o/forceUpdate.json?alt=media&token=b8c8d41f-58f7-45d9-aec1-8195619adf39" );
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        }
+        ismail.checkUpdate( "https://firebasestorage.googleapis.com/v0/b/zingat-libs.appspot.com/o/forceUpdate.json?alt=media&token=b8c8d41f-58f7-45d9-aec1-8195619adf39" );
     }
 
     @Override

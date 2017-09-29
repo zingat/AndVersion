@@ -26,6 +26,7 @@ public class Ismail implements AndVersionContract.View {
                 .build().inject( this );
 
         mPresenter.setView( this );
+        mPresenter.setPackageInfoForPresenter( this.activity );
 
     }
 
@@ -37,6 +38,7 @@ public class Ismail implements AndVersionContract.View {
         }
 
     }
+
 
     @Override
     public void makeToast( final String response ) {
