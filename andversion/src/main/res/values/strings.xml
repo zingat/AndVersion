@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">AndVersion</string>
+    <string name="title_before_update">Sizi Bekleyen Yenilikler</string>
+    <string name="title_after_update">Bu Sürümdeki Yenilikler</string>
+    <string name="dialog_checkbox_message">Bir daha sorma</string>
+    <string name="button_update">Güncelle</string>
+    <string name="button_cancel">Vazgeç</string>
+    <string name="button_exit_app">Uygulamadan Çık</string>
+
 </resources>
