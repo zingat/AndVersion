@@ -14,6 +14,8 @@ public interface AndVersionContract {
 
         void makeToast( String response );
 
+        void showForceUpdateDialogs( String whatsNew );
+
     }
 
     interface Presenter {
@@ -23,6 +25,7 @@ public interface AndVersionContract {
         void getJsonFromUrl( String url ) throws IOException;
 
         void setPackageInfoForPresenter( Activity activity );
+
 
     }
 }

@@ -92,8 +92,8 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                 if ( responseBody != null ) {
                     try {
                         mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
-                        int minVersion = mJsonParseHelper.getMinSupportVersion();
-                        int currentVersion = mJsonParseHelper.getCurrentVersion();
+                        int minSupportVersion = mJsonParseHelper.getMinSupportVersion();
+                        int currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
                         ArrayList< String > trWhatsNew = mJsonParseHelper.getTrWhatsNew();
 
                         String features = "";
@@ -101,7 +101,11 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                             features = features + " " + trWhatsNew.get( i ) + "\n";
                         }
 
-                        mView.makeToast( "" + minVersion + " " + currentVersion + "\n" + features + "\n" + currentVersionName + "\t" + currentVersionCode );
+                        if ( currentVersionCode < minSupportVersion ) {
+                            mView.showForceUpdateDialogs( features );
+                        }
+
+                        //mView.makeToast( "" + minSupportVersion + " " + currentUpdateVersion + "\n" + features + "\n" + currentVersionName + "\t" + currentVersionCode );
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();

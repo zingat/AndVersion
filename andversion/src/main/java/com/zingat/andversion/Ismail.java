@@ -2,7 +2,11 @@ package com.zingat.andversion;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.IOException;
 
@@ -50,5 +54,30 @@ public class Ismail implements AndVersionContract.View {
 
             }
         } );
+    }
+
+    @Override
+    public void showForceUpdateDialogs( final String whatsNew ) {
+
+        activity.runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                new MaterialDialog.Builder( activity )
+                        .cancelable( false )
+                        .title( activity.getString( R.string.title_before_update ) )
+                        .content( whatsNew )
+                        .positiveText( activity.getString( R.string.button_update ) )
+                        .negativeText( activity.getString( R.string.button_exit_app ) )
+                        .onNegative( new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
+                                activity.finish();
+                            }
+                        } )
+                        .show();
+            }
+        } );
+
+
     }
 }
