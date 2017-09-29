@@ -1,8 +1,13 @@
 package com.zingat.andversion;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
+
+import com.zingat.andversion.constants.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +35,8 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     private JsonParseHelper mJsonParseHelper;
     private String currentVersionName;
     private int currentVersionCode;
+    private int lastSessionVersion;
+    private String packageName;
 
     @Inject
     AndVersionPresenter() {
@@ -63,9 +70,45 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
             PackageInfo packageInfo = activity.getPackageManager().getPackageInfo( activity.getPackageName(), 0 );
             this.currentVersionName = packageInfo.versionName;
             this.currentVersionCode = packageInfo.versionCode;
+            this.packageName = packageInfo.packageName;
 
         } catch ( PackageManager.NameNotFoundException e ) {
             e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void checkLastSessionVersion( Activity activity, String features ) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( activity );
+        this.lastSessionVersion = preferences.getInt( Constants.LAST_SESSION_VERSION, 0 );
+
+        SharedPreferences.Editor editor = preferences.edit();
+
+
+        if ( this.lastSessionVersion == this.currentVersionCode ) {
+
+            mView.makeToast( "Uygulamanız Güncel!" );
+
+        } else {
+
+            if ( this.lastSessionVersion == 0 ) {
+
+                this.lastSessionVersion = this.currentVersionCode;
+                editor.putInt( Constants.LAST_SESSION_VERSION, this.lastSessionVersion );
+                editor.apply();
+                mView.makeToast( "Uygulamanız Güncel !" );
+
+            } else {
+
+                this.lastSessionVersion = this.currentVersionCode;
+                editor.putInt( Constants.LAST_SESSION_VERSION, this.lastSessionVersion );
+                editor.apply();
+                mView.showUpdateFeatures( features );
+
+
+            }
         }
 
     }
@@ -101,11 +144,18 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                             features = features + " " + trWhatsNew.get( i ) + "\n";
                         }
 
-                        if ( currentVersionCode < minSupportVersion ) {
-                            mView.showForceUpdateDialogs( features );
+                        if ( currentUpdateVersion != -1 && minSupportVersion != -1 ) {
+
+                            if ( currentVersionCode < minSupportVersion ) {
+                                mView.showForceUpdateDialogs( features, packageName );
+                            } else {
+
+                                mView.checkLastSessionVersion( features );
+
+                            }
+
                         }
 
-                        //mView.makeToast( "" + minSupportVersion + " " + currentUpdateVersion + "\n" + features + "\n" + currentVersionName + "\t" + currentVersionCode );
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();

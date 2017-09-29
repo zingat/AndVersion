@@ -14,7 +14,11 @@ public interface AndVersionContract {
 
         void makeToast( String response );
 
-        void showForceUpdateDialogs( String whatsNew );
+        void showForceUpdateDialogs( String whatsNew, String packageName );
+
+        void checkLastSessionVersion( String features );
+
+        void showUpdateFeatures( String features );
 
     }
 
@@ -25,6 +29,8 @@ public interface AndVersionContract {
         void getJsonFromUrl( String url ) throws IOException;
 
         void setPackageInfoForPresenter( Activity activity );
+
+        void checkLastSessionVersion( Activity activity, String features );
 
 
     }

@@ -2,6 +2,8 @@ package com.zingat.andversion;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
@@ -57,11 +59,12 @@ public class Ismail implements AndVersionContract.View {
     }
 
     @Override
-    public void showForceUpdateDialogs( final String whatsNew ) {
+    public void showForceUpdateDialogs( final String whatsNew, final String packageName ) {
 
         activity.runOnUiThread( new Runnable() {
             @Override
             public void run() {
+
                 new MaterialDialog.Builder( activity )
                         .cancelable( false )
                         .title( activity.getString( R.string.title_before_update ) )
@@ -71,12 +74,44 @@ public class Ismail implements AndVersionContract.View {
                         .onNegative( new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
+
                                 activity.finish();
+
+                            }
+                        } )
+                        .onPositive( new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
+
+                                try {
+                                    activity.startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=" + "com.zingat.emlak" ) ) );
+                                } catch ( android.content.ActivityNotFoundException anfe ) {
+                                    activity.startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( "https://play.google.com/store/apps/details?id=" + "com.zingat.emlak" ) ) );
+                                }
+
                             }
                         } )
                         .show();
             }
         } );
+
+
+    }
+
+    @Override
+    public void checkLastSessionVersion( String features ) {
+        mPresenter.checkLastSessionVersion( this.activity, features );
+    }
+
+    @Override
+    public void showUpdateFeatures( String features ) {
+
+        new MaterialDialog.Builder( activity )
+                .cancelable( false )
+                .title( activity.getString( R.string.title_after_update ) )
+                .content( features )
+                .positiveText( "Tamam" )
+                .show();
 
 
     }
