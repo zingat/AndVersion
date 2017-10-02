@@ -3,7 +3,7 @@
     <string name="andversion_forceupdate_title">What\'s New Waiting For You !</string>
     <string name="andversion_whatsnew_title">Whats\'s New In This Version</string>
     <string name="andversion_update">Update</string>
-    <string name="andversion_exit_app">Exit From App</string>
+    <string name="andversion_exit_app">Exit</string>
     <string name="andversion_ok">Ok</string>
 
 
@@ -22,7 +22,7 @@
         <item>What\'s New Waiting For You !</item>
         <item>Whats\'s New In This Version</item>
         <item>Update</item>
-        <item>Exit From App</item>
+        <item>Exit</item>
         <item>Ok</item>
 
     </string-array>
