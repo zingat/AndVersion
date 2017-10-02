@@ -1,10 +1,18 @@
 <resources>
     <string name="app_name">AndVersion</string>
-    <string name="title_before_update">Sizi Bekleyen Yenilikler</string>
-    <string name="title_after_update">Bu Sürümdeki Yenilikler</string>
-    <string name="dialog_checkbox_message">Bir daha sorma</string>
-    <string name="button_update">Güncelle</string>
-    <string name="button_cancel">Vazgeç</string>
-    <string name="button_exit_app">Uygulamadan Çık</string>
+    <string name="andversion_forceupdate_title">What\'s New Waiting For You !</string>
+    <string name="andversion_whatsnew_title">Whats\'s New In This Version</string>
+    <string name="andversion_update">Update</string>
+    <string name="andversion_exit_app">Exit From App</string>
+    <string name="andversion_ok">Ok</string>
+
+
+    <string-array name="string_keys">
+        <item>andversion_forceupdate_title</item>
+        <item>andversion_whatsnew_title</item>
+        <item>andversion_update</item>
+        <item>andversion_exit_app</item>
+        <item>andversion_ok</item>
+    </string-array>
 
 </resources>
