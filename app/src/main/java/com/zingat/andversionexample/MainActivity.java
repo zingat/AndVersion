@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         AndVersion andVersion = new AndVersion( this );
-        andVersion.checkUpdate( "https://firebasestorage.googleapis.com/v0/b/zingat-libs.appspot.com/o/forceUpdate.json?alt=media&token=62bcc80a-820f-4de8-b1bf-fe1b898f85a1" );
+        andVersion.checkUpdate( "https://firebasestorage.googleapis.com/v0/b/zingat-libs.appspot.com/o/forceUpdate.json?alt=media&token=833d7cd9-d0a1-4e40-a142-289b3282e0e4" );
 
     }
 
