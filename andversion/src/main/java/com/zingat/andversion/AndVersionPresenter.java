@@ -28,16 +28,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-/**
- * Created by ismailgungor on 28.09.2017.
- */
-
 public class AndVersionPresenter implements AndVersionContract.Presenter {
 
     private AndVersionContract.View mView;
     private OkHttpClient mClient;
     private JsonParseHelper mJsonParseHelper;
-    private String currentVersionName;
     private int currentVersionCode;
     private int lastSessionVersion;
     private String packageName;
@@ -73,7 +68,6 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
         try {
             this.activity = activity;
             PackageInfo packageInfo = this.activity.getPackageManager().getPackageInfo( activity.getPackageName(), 0 );
-            this.currentVersionName = packageInfo.versionName;
             this.currentVersionCode = packageInfo.versionCode;
             this.packageName = packageInfo.packageName;
 
@@ -137,28 +131,33 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
                 if ( responseBody != null ) {
                     try {
+
                         mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
                         int minSupportVersion = mJsonParseHelper.getMinSupportVersion();
                         int currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
-                        ArrayList< String > trWhatsNew = mJsonParseHelper.getTrWhatsNew();
+                        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
 
                         String features = "";
-                        for ( int i = 0; i < trWhatsNew.size(); i++ ) {
-                            features = features + "- " + trWhatsNew.get( i ) + "\n";
+                        if ( whatsNew != null ) {
+                            for ( int i = 0; i < whatsNew.size(); i++ ) {
+                                features = features + "- " + whatsNew.get( i ) + "\n";
+                            }
                         }
 
                         if ( currentUpdateVersion != -1 && minSupportVersion != -1 ) {
 
                             if ( currentVersionCode < minSupportVersion ) {
-                                mView.showForceUpdateDialogs( features + "\n" + Locale.getDefault().getLanguage(), packageName );
+
+                                mView.showForceUpdateDialogs( features, packageName );
+
                             } else {
 
-                                mView.checkLastSessionVersion( features, currentUpdateVersion );
+                                if ( !features.equals( "" ) ) {
+                                    mView.checkLastSessionVersion( features, currentUpdateVersion );
+                                }
 
                             }
-
                         }
-
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();
