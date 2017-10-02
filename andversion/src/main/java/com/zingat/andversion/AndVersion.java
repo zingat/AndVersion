@@ -9,8 +9,10 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.zingat.andversion.constants.Constants;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.inject.Inject;
 
@@ -66,12 +68,14 @@ public class AndVersion implements AndVersionContract.View {
             @Override
             public void run() {
 
+                HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
+
                 new MaterialDialog.Builder( activity )
                         .cancelable( false )
-                        .title( activity.getString( R.string.title_before_update ) )
+                        .title( stringValuesMap.get( Constants.ANDVERSION_FORCEUPDATE_TITLE ) )
                         .content( whatsNew )
-                        .positiveText( activity.getString( R.string.button_update ) )
-                        .negativeText( activity.getString( R.string.button_exit_app ) )
+                        .positiveText( stringValuesMap.get( Constants.ANDVERSION_UPDATE ) )
+                        .negativeText( stringValuesMap.get( Constants.ANDVERSION_EXIT_APP ) )
                         .onNegative( new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
@@ -103,15 +107,18 @@ public class AndVersion implements AndVersionContract.View {
     @Override
     public void showUpdateFeatures( final String features ) {
 
+        final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
+
+
         activity.runOnUiThread( new Runnable() {
             @Override
             public void run() {
 
                 new MaterialDialog.Builder( activity )
                         .cancelable( false )
-                        .title( activity.getString( R.string.title_after_update ) )
+                        .title( stringValuesMap.get( Constants.ANDVERSION_WHATSNEW_TITLE ) )
                         .content( features )
-                        .positiveText( "Tamam" )
+                        .positiveText( Constants.ANDVERSION_OK )
                         .show();
             }
         } );
