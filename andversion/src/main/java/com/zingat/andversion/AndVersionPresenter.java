@@ -16,6 +16,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -148,7 +150,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                         if ( currentUpdateVersion != -1 && minSupportVersion != -1 ) {
 
                             if ( currentVersionCode < minSupportVersion ) {
-                                mView.showForceUpdateDialogs( features, packageName );
+                                mView.showForceUpdateDialogs( features + "\n" + Locale.getDefault().getLanguage(), packageName );
                             } else {
 
                                 mView.checkLastSessionVersion( features, currentUpdateVersion );
@@ -165,7 +167,33 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
             }
         } );
 
+    }
 
+    @Override
+    public HashMap< String, String > getStringValues() {
+
+        HashMap< String, String > stringValuesMap = new HashMap<>();
+
+        String[] stringKeys = this.activity.getResources().getStringArray( R.array.string_keys );
+        String[] stringValues = this.activity.getResources().getStringArray( R.array.string_values );
+
+        for ( int i = 0; i < stringKeys.length; i++ ) {
+
+            int identifier = this.activity.getResources().getIdentifier( stringKeys[i], "string", packageName );
+            String stringValue;
+
+            if ( identifier != 0 ) {
+
+                stringValue = this.activity.getResources().getString( identifier );
+                stringValuesMap.put( stringKeys[i], stringValue );
+            } else {
+
+                stringValue = stringValues[i];
+                stringValuesMap.put( stringKeys[i], stringValue );
+            }
+
+        }
+        return stringValuesMap;
     }
 
 }
