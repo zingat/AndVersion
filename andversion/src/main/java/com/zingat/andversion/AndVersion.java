@@ -1,9 +1,6 @@
 package com.zingat.andversion;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
@@ -60,11 +57,11 @@ public class AndVersion implements AndVersionContract.View {
     @Override
     public void showForceUpdateDialogs( final String whatsNew, final String packageName ) {
 
+        final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
+
         activity.runOnUiThread( new Runnable() {
             @Override
             public void run() {
-
-                HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
 
                 new MaterialDialog.Builder( activity )
                         .cancelable( false )
@@ -104,7 +101,6 @@ public class AndVersion implements AndVersionContract.View {
     public void showUpdateFeatures( final String features ) {
 
         final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
-
 
         activity.runOnUiThread( new Runnable() {
             @Override
