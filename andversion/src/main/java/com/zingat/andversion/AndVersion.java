@@ -16,10 +16,6 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
-/**
- * Created by ismailgungor on 28.09.2017.
- */
-
 public class AndVersion implements AndVersionContract.View {
 
     private Activity activity;
@@ -118,7 +114,7 @@ public class AndVersion implements AndVersionContract.View {
                         .cancelable( false )
                         .title( stringValuesMap.get( Constants.ANDVERSION_WHATSNEW_TITLE ) )
                         .content( features )
-                        .positiveText( Constants.ANDVERSION_OK )
+                        .positiveText( stringValuesMap.get( Constants.ANDVERSION_OK ) )
                         .show();
             }
         } );
