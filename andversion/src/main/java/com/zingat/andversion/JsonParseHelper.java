@@ -7,17 +7,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 
-/**
- * Created by ismailgungor on 28.09.2017.
- */
 
 public class JsonParseHelper {
 
 
     private JSONObject andVersionObject;
 
-    public void setAndVersionObject( JSONObject responseObjcet )  {
+    public void setAndVersionObject( JSONObject responseObjcet ) {
         try {
             this.andVersionObject = responseObjcet.getJSONObject( Constants.ANDVERSION_OBJECT );
 
@@ -48,16 +48,27 @@ public class JsonParseHelper {
         return -1;
     }
 
-    public ArrayList< String > getTrWhatsNew() {
+    public ArrayList< String > getWhatsNew() {
 
-        ArrayList< String > trWhatsNewArray = new ArrayList<>();
+        ArrayList< String > whatsNewArray = new ArrayList<>();
 
         try {
             JSONObject whatsNewObject = andVersionObject.getJSONObject( Constants.WHATSNEW_OBJECT );
-            JSONArray trWhatsNewJsonArray = whatsNewObject.getJSONArray( Constants.WHATSNEW_TR_ARRAY );
+            Iterator< String > keys = whatsNewObject.keys();
+            JSONArray whatsNewJsonArray = null;
 
-            for ( int i = 0; i < trWhatsNewJsonArray.length(); i++ ) {
-                trWhatsNewArray.add( trWhatsNewJsonArray.get( i ).toString() );
+            if ( whatsNewObject.has( Locale.getDefault().getLanguage() ) ) {
+                whatsNewJsonArray = whatsNewObject.getJSONArray( Locale.getDefault().getLanguage() );
+            } else if ( whatsNewObject.has( Constants.WHATSNEW_EN_ARRAY ) ) {
+                whatsNewJsonArray = whatsNewObject.getJSONArray( Constants.WHATSNEW_EN_ARRAY );
+            } else if ( whatsNewObject.length() > 0 ) {
+                whatsNewJsonArray = whatsNewObject.getJSONArray( keys.next() );
+            }
+
+            if ( whatsNewJsonArray != null ) {
+                for ( int i = 0; i < whatsNewJsonArray.length(); i++ ) {
+                    whatsNewArray.add( whatsNewJsonArray.get( i ).toString() );
+                }
             }
 
         } catch ( JSONException e ) {
@@ -65,7 +76,7 @@ public class JsonParseHelper {
 
         }
 
-        return trWhatsNewArray;
+        return whatsNewArray;
     }
 
 }
