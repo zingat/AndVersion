@@ -106,11 +106,11 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void sendUserToGooglePlay() {
+    public void sendUserToGooglePlay( String packageName ) {
         try {
-            this.activity.startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=" + "com.zingat.emlak" ) ) );
+            this.activity.startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( "market://details?id=" + packageName ) ) );
         } catch ( android.content.ActivityNotFoundException anfe ) {
-            this.activity.startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( "https://play.google.com/store/apps/details?id=" + "com.zingat.emlak" ) ) );
+            this.activity.startActivity( new Intent( Intent.ACTION_VIEW, Uri.parse( "https://play.google.com/store/apps/details?id=" + packageName ) ) );
         }
     }
 

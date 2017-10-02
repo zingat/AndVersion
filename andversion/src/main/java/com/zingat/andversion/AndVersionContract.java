@@ -32,7 +32,7 @@ public interface AndVersionContract {
 
         void checkLastSessionVersion( Activity activity, String features, int currentUpdateVersion );
 
-        void sendUserToGooglePlay();
+        void sendUserToGooglePlay( String packageName );
 
     }
 }

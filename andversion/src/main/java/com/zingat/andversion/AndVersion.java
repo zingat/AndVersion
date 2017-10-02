@@ -84,7 +84,7 @@ public class AndVersion implements AndVersionContract.View {
                             @Override
                             public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
 
-                                mPresenter.sendUserToGooglePlay();
+                                mPresenter.sendUserToGooglePlay( packageName );
 
                             }
                         } )
