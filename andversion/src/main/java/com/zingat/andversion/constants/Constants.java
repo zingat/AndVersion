@@ -1,9 +1,5 @@
 package com.zingat.andversion.constants;
 
-/**
- * Created by ismailgungor on 28.09.2017.
- */
-
 public class Constants {
 
     public static final String ANDVERSION_OBJECT = "AndVersion";

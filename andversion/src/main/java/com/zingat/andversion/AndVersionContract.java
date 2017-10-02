@@ -5,9 +5,6 @@ import android.app.Activity;
 import java.io.IOException;
 import java.util.HashMap;
 
-/**
- * Created by ismailgungor on 28.09.2017.
- */
 
 public interface AndVersionContract {
 
