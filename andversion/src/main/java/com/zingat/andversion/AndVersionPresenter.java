@@ -300,7 +300,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
                         if ( currentUpdateVersion != -1 && !features.equals( "" ) ) {
 
-                            mView.checkLastSessionVersion( features, currentUpdateVersion );
+                            mView.checkNewsLastSessionVersion( features, currentUpdateVersion );
 
                         }
                     } catch ( JSONException e ) {
@@ -311,6 +311,29 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
             }
         } );
 
+    }
+
+    @Override
+    public void checkNewsLastSessionVersion( Activity activity, String features, int currentUpdateVersion ) {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( activity );
+        this.lastSessionVersion = preferences.getInt( Constants.LAST_SESSION_VERSION, 0 );
+
+        SharedPreferences.Editor editor = preferences.edit();
+
+        if ( this.lastSessionVersion != this.currentVersionCode ) {
+
+            if ( this.lastSessionVersion != 0 && this.currentVersionCode <= currentUpdateVersion && this.currentVersionCode == currentUpdateVersion ) {
+
+                mView.showUpdateFeatures( features, this.mCompletedListener );
+
+            }
+
+            this.lastSessionVersion = this.currentVersionCode;
+            editor.putInt( Constants.LAST_SESSION_VERSION, this.lastSessionVersion );
+            editor.apply();
+
+        }
     }
 
 }

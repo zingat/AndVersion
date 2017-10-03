@@ -121,6 +121,12 @@ public class AndVersion implements AndVersionContract.View {
     }
 
     @Override
+    public void checkNewsLastSessionVersion( String features, int currentUdateVersion ) {
+        mPresenter.checkNewsLastSessionVersion( this.activity, features, currentUdateVersion );
+
+    }
+
+    @Override
     public void showUpdateFeatures( final String features, final OnCompletedListener completedListener ) {
 
         final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();

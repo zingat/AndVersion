@@ -14,6 +14,8 @@ public interface AndVersionContract {
 
         void checkLastSessionVersion( String features, int currentUdateVersion );
 
+        void checkNewsLastSessionVersion( String features, int currentUdateVersion );
+
         void showUpdateFeatures( String features, OnCompletedListener completedListener );
 
     }
@@ -35,6 +37,9 @@ public interface AndVersionContract {
         void getForceUpdateInfoFromUrl( String url, OnCompletedListener onCompletedListener );
 
         void getVersionInfoFromUrl( String url );
+
+        void checkNewsLastSessionVersion( Activity activity, String features, int currentUpdateVersion );
+
 
     }
 }
