@@ -46,20 +46,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AndVersion andVersion = AndVersion.getInstance( MainActivity.this );
-        andVersion.setActivity( MainActivity.this );
-        andVersion.setUri( ANDVERSION_URL );
-        andVersion.checkIsThereForceUpdate( new OnCompletedListener() {
-            @Override
-            public void onCompleted( final String from ) {
-                runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText( MainActivity.this, from, Toast.LENGTH_SHORT ).show();
-                    }
-                } );
-            }
-        } );
+
+        AndVersion.getInstance()
+                .setActivity( this )
+                .setUri( ANDVERSION_URL );
+
+//        AndVersion.getInstance()
+//                .checkIsThereForceUpdate( new OnCompletedListener() {
+//                    @Override
+//                    public void onCompleted( final String from ) {
+//                        runOnUiThread( new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Toast.makeText( MainActivity.this, from, Toast.LENGTH_SHORT ).show();
+//
+//                            }
+//                        } );
+//                    }
+//                } );
+
 
     }
 

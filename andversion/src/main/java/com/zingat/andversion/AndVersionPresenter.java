@@ -35,7 +35,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     private int lastSessionVersion;
     private String packageName;
     private Activity activity;
-    private OnCompletedListener completedListener;
+    private OnCompletedListener mCompletedListener;
 
     @Inject
     AndVersionPresenter() {
@@ -88,11 +88,11 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
             if ( this.lastSessionVersion != 0 && this.currentVersionCode <= currentUpdateVersion && this.currentVersionCode == currentUpdateVersion ) {
 
-                mView.showUpdateFeatures( features, this.completedListener );
+                mView.showUpdateFeatures( features, this.mCompletedListener );
 
 
             } else {
-                this.completedListener.onCompleted( "LastSessionVersion NOT Equal currentVersionCode" );
+                this.mCompletedListener.onCompleted( "LastSessionVersion NOT Equal currentVersionCode" );
             }
 
             this.lastSessionVersion = this.currentVersionCode;
@@ -101,7 +101,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
 
         } else {
-            this.completedListener.onCompleted( "LastSessionVersion Equal currentVersionCode" );
+            this.mCompletedListener.onCompleted( "LastSessionVersion Equal currentVersionCode" );
         }
 
     }
@@ -118,7 +118,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     @Override
     public void getJsonFromUrl( String url, final OnCompletedListener completedListener ) throws IOException {
 
-        this.completedListener = completedListener;
+        this.mCompletedListener = completedListener;
         Request request = new Request.Builder()
                 .url( url )
                 .build();
@@ -210,15 +210,15 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
     @Override
     public void getForceUpdateInfoFromUrl( String url, final OnCompletedListener onCompletedListener ) {
-        this.completedListener = completedListener;
-        final Request request = new Request.Builder()
+
+        Request request = new Request.Builder()
                 .url( url )
                 .build();
 
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( Call call, IOException e ) {
-                completedListener.onCompleted( "getForceUpdateInfoFromUrl -> onFailure" );
+                mCompletedListener.onCompleted( "getForceUpdateInfoFromUrl -> onFailure" );
             }
 
             @Override
@@ -250,16 +250,17 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                             }
 
                         } else {
-                            completedListener.onCompleted( "minSupportVersio could not read from app" );
+                            mCompletedListener.onCompleted( "minSupportVersio could not read from json" );
                         }
 
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();
+                        mCompletedListener.onCompleted( "getForceUpdateInfoFromUrl -> onResponse catch" );
                     }
 
                 } else {
-                    completedListener.onCompleted( "Response body is null" );
+                    mCompletedListener.onCompleted( "Force Update response body is null" );
                 }
 
             }
@@ -267,7 +268,59 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void getVersionInfoFromUrl( String url, OnCompletedListener completedListener ) {
+    public void getVersionInfoFromUrl( String url, final OnCompletedListener completedListener ) {
+
+        this.mCompletedListener = completedListener;
+        Request request = new Request.Builder()
+                .url( url )
+                .build();
+
+        mClient.newCall( request ).enqueue( new Callback() {
+            @Override
+            public void onFailure( Call call, IOException e ) {
+                mCompletedListener.onCompleted( "getVersionInfoFromUrl -> onFailure" );
+            }
+
+            @Override
+            public void onResponse( Call call, Response response ) throws IOException {
+                ResponseBody responseBody = response.body();
+                if ( responseBody != null ) {
+                    try {
+                        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
+                        int currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
+                        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
+
+                        String features = "";
+                        if ( whatsNew != null ) {
+                            for ( int i = 0; i < whatsNew.size(); i++ ) {
+                                features = features + "- " + whatsNew.get( i ) + "\n";
+                            }
+                        }
+
+                        if ( currentUpdateVersion != -1 ) {
+
+                            if ( !features.equals( "" ) ) {
+                                mView.checkLastSessionVersion( features, currentUpdateVersion );
+                            } else {
+                                completedListener.onCompleted( "Features equals: \"\" " );
+                            }
+
+                        } else {
+                            mCompletedListener.onCompleted( "currentUpdateVersion could not read from json" );
+
+                        }
+
+
+                    } catch ( JSONException e ) {
+                        e.printStackTrace();
+                        mCompletedListener.onCompleted( "getVersionInfoFromUrl -> onResponse catch" );
+                    }
+
+                } else {
+                    mCompletedListener.onCompleted( "Version response body is null" );
+                }
+            }
+        } );
 
     }
 

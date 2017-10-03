@@ -19,34 +19,38 @@ public class AndVersion implements AndVersionContract.View {
     private String uri;
     private static AndVersion andVersion;
 
-    public static AndVersion getInstance( Activity activity ) {
+    public static AndVersion getInstance(  ) {
         if ( andVersion == null ) {
-            andVersion = new AndVersion( activity );
+            andVersion = new AndVersion(  );
 
         }
 
         return andVersion;
     }
 
-    public void setActivity( Activity activity ) {
+    public AndVersion setActivity( Activity activity ) {
         this.activity = activity;
+        this.mPresenter.setPackageInfoForPresenter( activity );
+
+        return this;
     }
 
-    public void setUri( String uri ) {
+    public AndVersion setUri( String uri ) {
         this.uri = uri;
+
+        return this;
     }
 
     @Inject
     AndVersionPresenter mPresenter;
 
-    private AndVersion( Activity activity ) {
+    private AndVersion( ) {
 
         DaggerAndVersionComponent.builder()
                 .andVersionModule( new AndVersionModule() )
                 .build().inject( this );
 
         this.mPresenter.setView( this );
-        this.mPresenter.setPackageInfoForPresenter( activity );
 
     }
 
