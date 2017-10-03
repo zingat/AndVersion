@@ -19,9 +19,12 @@ public class AndVersion implements AndVersionContract.View {
     private String uri;
     private static AndVersion andVersion;
 
-    public static AndVersion getInstance(  ) {
+    @Inject
+    AndVersionPresenter mPresenter;
+
+    public static AndVersion getInstance() {
         if ( andVersion == null ) {
-            andVersion = new AndVersion(  );
+            andVersion = new AndVersion();
 
         }
 
@@ -41,10 +44,7 @@ public class AndVersion implements AndVersionContract.View {
         return this;
     }
 
-    @Inject
-    AndVersionPresenter mPresenter;
-
-    private AndVersion( ) {
+    private AndVersion() {
 
         DaggerAndVersionComponent.builder()
                 .andVersionModule( new AndVersionModule() )
@@ -64,19 +64,18 @@ public class AndVersion implements AndVersionContract.View {
     }
 
 
-    public void checkIsThereForceUpdate( OnCompletedListener completedListener ) {
+    public void checForceUpdate( OnCompletedListener completedListener ) {
 
         this.mPresenter.getForceUpdateInfoFromUrl( uri, completedListener );
 
     }
 
 
-    public void checkWhatsNewMessage( OnCompletedListener completedListener ) {
+    public void checkNews() {
 
-        this.mPresenter.getVersionInfoFromUrl( uri, completedListener );
+        this.mPresenter.getVersionInfoFromUrl( uri );
 
     }
-
 
     @Override
     public void makeToast( final String response ) {
@@ -157,7 +156,6 @@ public class AndVersion implements AndVersionContract.View {
                         .show();
             }
         } );
-
 
     }
 }

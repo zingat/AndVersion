@@ -36,7 +36,7 @@ public interface AndVersionContract {
 
         void getForceUpdateInfoFromUrl( String url, OnCompletedListener onCompletedListener );
 
-        void getVersionInfoFromUrl( String url, OnCompletedListener completedListener );
+        void getVersionInfoFromUrl( String url );
 
     }
 }

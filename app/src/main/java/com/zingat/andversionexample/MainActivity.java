@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 .setUri( ANDVERSION_URL );
 
 //        AndVersion.getInstance()
-//                .checkIsThereForceUpdate( new OnCompletedListener() {
+//                .checForceUpdate( new OnCompletedListener() {
 //                    @Override
 //                    public void onCompleted( final String from ) {
 //                        runOnUiThread( new Runnable() {
