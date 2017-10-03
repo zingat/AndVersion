@@ -6,5 +6,5 @@ package com.zingat.andversion;
 
 public interface OnCompletedListener {
 
-    void onCompleted( String from );
+    void onCompleted();
 }
