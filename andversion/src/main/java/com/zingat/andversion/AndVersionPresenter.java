@@ -206,4 +206,9 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
         return stringValuesMap;
     }
 
+    @Override
+    public void getForceUpdateInfoFromUrl( String url, OnCompletedListener onCompletedListener ) {
+
+    }
+
 }

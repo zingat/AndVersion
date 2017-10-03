@@ -34,5 +34,7 @@ public interface AndVersionContract {
 
         HashMap< String, String > getStringValues();
 
+        void getForceUpdateInfoFromUrl( String url, OnCompletedListener onCompletedListener );
+
     }
 }

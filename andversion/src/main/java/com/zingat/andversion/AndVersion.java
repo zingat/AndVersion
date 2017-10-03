@@ -60,6 +60,19 @@ public class AndVersion implements AndVersionContract.View {
     }
 
 
+    public void checkIsThereForceUpdate( OnCompletedListener completedListener ) {
+
+        this.mPresenter.getForceUpdateInfoFromUrl( uri,completedListener );
+
+    }
+
+
+    public void checkWhatsNewMessage( OnCompletedListener completedListener ) {
+
+
+    }
+
+
     @Override
     public void makeToast( final String response ) {
 
