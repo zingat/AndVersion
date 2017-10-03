@@ -210,7 +210,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
     @Override
     public void getForceUpdateInfoFromUrl( String url, final OnCompletedListener onCompletedListener ) {
-
+        this.mCompletedListener = onCompletedListener;
         Request request = new Request.Builder()
                 .url( url )
                 .build();
@@ -246,7 +246,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                                 mView.showForceUpdateDialogs( features, packageName );
 
                             } else {
-                                onCompletedListener.onCompleted();
+                                mCompletedListener.onCompleted();
                             }
 
                         } else {
