@@ -10,8 +10,6 @@ public interface AndVersionContract {
 
     interface View {
 
-        void makeToast( String response );
-
         void showForceUpdateDialogs( String whatsNew, String packageName );
 
         void checkLastSessionVersion( String features, int currentUdateVersion );

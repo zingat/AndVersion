@@ -78,19 +78,6 @@ public class AndVersion implements AndVersionContract.View {
     }
 
     @Override
-    public void makeToast( final String response ) {
-
-        activity.runOnUiThread( new Runnable() {
-            @Override
-            public void run() {
-
-                Toast.makeText( activity, response, Toast.LENGTH_SHORT ).show();
-
-            }
-        } );
-    }
-
-    @Override
     public void showForceUpdateDialogs( final String whatsNew, final String packageName ) {
 
         final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
