@@ -18,6 +18,7 @@ public class AndVersion implements AndVersionContract.View {
     private Activity activity;
     private String uri;
     private static AndVersion andVersion;
+    private MaterialDialog mDialog;
 
     @Inject
     AndVersionPresenter mPresenter;
@@ -77,6 +78,10 @@ public class AndVersion implements AndVersionContract.View {
 
     }
 
+    public void closeDialog() {
+        this.mDialog.dismiss();
+    }
+
     @Override
     public void showForceUpdateDialogs( final String whatsNew, final String packageName ) {
 
@@ -86,7 +91,7 @@ public class AndVersion implements AndVersionContract.View {
             @Override
             public void run() {
 
-                new MaterialDialog.Builder( activity )
+                mDialog = new MaterialDialog.Builder( activity )
                         .cancelable( false )
                         .title( stringValuesMap.get( Constants.ANDVERSION_FORCEUPDATE_TITLE ) )
                         .content( whatsNew )
@@ -135,7 +140,7 @@ public class AndVersion implements AndVersionContract.View {
             @Override
             public void run() {
 
-                new MaterialDialog.Builder( activity )
+                mDialog = new MaterialDialog.Builder( activity )
                         .cancelable( false )
                         .title( stringValuesMap.get( Constants.ANDVERSION_WHATSNEW_TITLE ) )
                         .content( features )
@@ -161,7 +166,7 @@ public class AndVersion implements AndVersionContract.View {
             @Override
             public void run() {
 
-                new MaterialDialog.Builder( activity )
+                mDialog = new MaterialDialog.Builder( activity )
                         .cancelable( false )
                         .title( stringValuesMap.get( Constants.ANDVERSION_WHATSNEW_TITLE ) )
                         .content( features )
