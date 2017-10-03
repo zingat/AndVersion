@@ -92,7 +92,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
 
             } else {
-                this.mCompletedListener.onCompleted( "LastSessionVersion NOT Equal currentVersionCode" );
+                this.mCompletedListener.onCompleted();
             }
 
             this.lastSessionVersion = this.currentVersionCode;
@@ -101,7 +101,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
 
         } else {
-            this.mCompletedListener.onCompleted( "LastSessionVersion Equal currentVersionCode" );
+            this.mCompletedListener.onCompleted();
         }
 
     }
@@ -127,7 +127,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( Call call, IOException e ) {
-                completedListener.onCompleted( "getJsonFromUrl -> onFailure" );
+                completedListener.onCompleted();
             }
 
             @Override
@@ -161,20 +161,20 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                                 if ( !features.equals( "" ) ) {
                                     mView.checkLastSessionVersion( features, currentUpdateVersion );
                                 } else {
-                                    completedListener.onCompleted( "Features equals: \"\" " );
+                                    completedListener.onCompleted();
                                 }
 
                             }
                         } else {
-                            completedListener.onCompleted( "currentUpdate or minSupportVersion error" );
+                            completedListener.onCompleted();
                         }
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();
-                        completedListener.onCompleted( "getJsonFromUrl -> onResponse catch" );
+                        completedListener.onCompleted();
                     }
                 } else {
-                    completedListener.onCompleted( "ResponseBody is null" );
+                    completedListener.onCompleted();
                 }
             }
         } );
@@ -218,7 +218,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( Call call, IOException e ) {
-                mCompletedListener.onCompleted( "getForceUpdateInfoFromUrl -> onFailure" );
+                mCompletedListener.onCompleted();
             }
 
             @Override
@@ -246,21 +246,21 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                                 mView.showForceUpdateDialogs( features, packageName );
 
                             } else {
-                                onCompletedListener.onCompleted( "Force update is not necessary for this device" );
+                                onCompletedListener.onCompleted();
                             }
 
                         } else {
-                            mCompletedListener.onCompleted( "minSupportVersio could not read from json" );
+                            mCompletedListener.onCompleted();
                         }
 
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();
-                        mCompletedListener.onCompleted( "getForceUpdateInfoFromUrl -> onResponse catch" );
+                        mCompletedListener.onCompleted();
                     }
 
                 } else {
-                    mCompletedListener.onCompleted( "Force Update response body is null" );
+                    mCompletedListener.onCompleted();
                 }
 
             }

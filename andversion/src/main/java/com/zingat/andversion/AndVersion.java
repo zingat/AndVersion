@@ -150,7 +150,7 @@ public class AndVersion implements AndVersionContract.View {
                         .onPositive( new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
-                                completedListener.onCompleted( "Tamam" );
+                                completedListener.onCompleted();
                             }
                         } )
                         .show();
