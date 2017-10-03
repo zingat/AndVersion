@@ -266,4 +266,9 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
         } );
     }
 
+    @Override
+    public void getVersionInfoFromUrl( String url, OnCompletedListener completedListener ) {
+
+    }
+
 }

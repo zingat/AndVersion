@@ -62,13 +62,14 @@ public class AndVersion implements AndVersionContract.View {
 
     public void checkIsThereForceUpdate( OnCompletedListener completedListener ) {
 
-        this.mPresenter.getForceUpdateInfoFromUrl( uri,completedListener );
+        this.mPresenter.getForceUpdateInfoFromUrl( uri, completedListener );
 
     }
 
 
     public void checkWhatsNewMessage( OnCompletedListener completedListener ) {
 
+        this.mPresenter.getVersionInfoFromUrl( uri, completedListener );
 
     }
 
