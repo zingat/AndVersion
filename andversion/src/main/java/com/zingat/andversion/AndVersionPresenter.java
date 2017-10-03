@@ -35,6 +35,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     private int lastSessionVersion;
     private String packageName;
     private Activity activity;
+    private OnCompletedListener completedListener;
 
     @Inject
     AndVersionPresenter() {
@@ -87,14 +88,20 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
             if ( this.lastSessionVersion != 0 && this.currentVersionCode <= currentUpdateVersion && this.currentVersionCode == currentUpdateVersion ) {
 
-                mView.showUpdateFeatures( features );
+                mView.showUpdateFeatures( features, this.completedListener );
 
+
+            } else {
+                this.completedListener.onCompleted( "LastSessionVersion NOT Equal currentVersionCode" );
             }
 
             this.lastSessionVersion = this.currentVersionCode;
             editor.putInt( Constants.LAST_SESSION_VERSION, this.lastSessionVersion );
             editor.apply();
 
+
+        } else {
+            this.completedListener.onCompleted( "LastSessionVersion Equal currentVersionCode" );
         }
 
     }
@@ -109,8 +116,9 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void getJsonFromUrl( String url ) throws IOException {
+    public void getJsonFromUrl( String url, final OnCompletedListener completedListener ) throws IOException {
 
+        this.completedListener = completedListener;
         Request request = new Request.Builder()
                 .url( url )
                 .build();
@@ -119,7 +127,7 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( Call call, IOException e ) {
-                mView.makeToast( "Hata" );
+                completedListener.onCompleted( "getJsonFromUrl -> onFailure" );
             }
 
             @Override
@@ -152,13 +160,18 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
                                 if ( !features.equals( "" ) ) {
                                     mView.checkLastSessionVersion( features, currentUpdateVersion );
+                                } else {
+                                    completedListener.onCompleted( "Features equals: \"\" " );
                                 }
 
                             }
+                        } else {
+                            completedListener.onCompleted( "currentUpdate or minSupportVersion error" );
                         }
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();
+                        completedListener.onCompleted( "getJsonFromUrl -> onResponse catch" );
                     }
                 }
             }

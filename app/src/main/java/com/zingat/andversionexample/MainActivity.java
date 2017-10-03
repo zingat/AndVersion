@@ -1,6 +1,7 @@
 package com.zingat.andversionexample;
 
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,10 +9,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.zingat.andversion.AndVersion;
+import com.zingat.andversion.OnCompletedListener;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String ANDVERSION_URL = "https://firebasestorage.googleapis.com/v0/b/zingat-libs.appspot.com/o/forceUpdate.json?alt=media&token=833d7cd9-d0a1-4e40-a142-289b3282e0e4";
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -37,11 +42,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
-        AndVersion andVersion = new AndVersion( this );
-        andVersion.checkUpdate( "https://firebasestorage.googleapis.com/v0/b/zingat-libs.appspot.com/o/forceUpdate.json?alt=media&token=833d7cd9-d0a1-4e40-a142-289b3282e0e4" );
+        AndVersion andVersion = AndVersion.getInstance( MainActivity.this );
+        andVersion.setActivity( MainActivity.this );
+        andVersion.setUri( ANDVERSION_URL );
+        andVersion.checkUpdate( new OnCompletedListener() {
+            @Override
+            public void onCompleted( final String from ) {
+                runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText( MainActivity.this, "OnCompleted: " + from, Toast.LENGTH_SHORT ).show();
+
+                    }
+                } );
+
+            }
+        } );
 
     }
 

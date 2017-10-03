@@ -16,24 +16,43 @@ import javax.inject.Inject;
 public class AndVersion implements AndVersionContract.View {
 
     private Activity activity;
+    private String uri;
+    private static AndVersion andVersion;
+
+    public static AndVersion getInstance( Activity activity ) {
+        if ( andVersion == null ) {
+            andVersion = new AndVersion( activity );
+
+        }
+
+        return andVersion;
+    }
+
+    public void setActivity( Activity activity ) {
+        this.activity = activity;
+    }
+
+    public void setUri( String uri ) {
+        this.uri = uri;
+    }
 
     @Inject
     AndVersionPresenter mPresenter;
 
-    public AndVersion( Activity activity ) {
-        this.activity = activity;
+    private AndVersion( Activity activity ) {
+
         DaggerAndVersionComponent.builder()
                 .andVersionModule( new AndVersionModule() )
                 .build().inject( this );
 
-        mPresenter.setView( this );
-        mPresenter.setPackageInfoForPresenter( this.activity );
+        this.mPresenter.setView( this );
+        this.mPresenter.setPackageInfoForPresenter( activity );
 
     }
 
-    public void checkUpdate( String url ) {
+    public void checkUpdate( OnCompletedListener completedListener ) {
         try {
-            this.mPresenter.getJsonFromUrl( url );
+            this.mPresenter.getJsonFromUrl( uri, completedListener );
         } catch ( IOException e ) {
             e.printStackTrace();
         }
@@ -98,7 +117,7 @@ public class AndVersion implements AndVersionContract.View {
     }
 
     @Override
-    public void showUpdateFeatures( final String features ) {
+    public void showUpdateFeatures( final String features, final OnCompletedListener completedListener ) {
 
         final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
 
@@ -111,6 +130,12 @@ public class AndVersion implements AndVersionContract.View {
                         .title( stringValuesMap.get( Constants.ANDVERSION_WHATSNEW_TITLE ) )
                         .content( features )
                         .positiveText( stringValuesMap.get( Constants.ANDVERSION_OK ) )
+                        .onPositive( new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
+                                completedListener.onCompleted( "Tamam" );
+                            }
+                        } )
                         .show();
             }
         } );
