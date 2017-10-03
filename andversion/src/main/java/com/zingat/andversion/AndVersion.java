@@ -151,4 +151,25 @@ public class AndVersion implements AndVersionContract.View {
         } );
 
     }
+
+    @Override
+    public void showNews( final String features ) {
+
+        final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
+
+        activity.runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+
+                new MaterialDialog.Builder( activity )
+                        .cancelable( false )
+                        .title( stringValuesMap.get( Constants.ANDVERSION_WHATSNEW_TITLE ) )
+                        .content( features )
+                        .positiveText( stringValuesMap.get( Constants.ANDVERSION_OK ) )
+                        .show();
+            }
+        } );
+
+
+    }
 }

@@ -18,6 +18,8 @@ public interface AndVersionContract {
 
         void showUpdateFeatures( String features, OnCompletedListener completedListener );
 
+        void showNews( String features );
+
     }
 
     interface Presenter {
