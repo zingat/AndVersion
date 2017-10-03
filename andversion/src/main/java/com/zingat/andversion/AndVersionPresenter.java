@@ -173,6 +173,8 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
                         e.printStackTrace();
                         completedListener.onCompleted( "getJsonFromUrl -> onResponse catch" );
                     }
+                } else {
+                    completedListener.onCompleted( "ResponseBody is null" );
                 }
             }
         } );
@@ -207,8 +209,61 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void getForceUpdateInfoFromUrl( String url, OnCompletedListener onCompletedListener ) {
+    public void getForceUpdateInfoFromUrl( String url, final OnCompletedListener onCompletedListener ) {
+        this.completedListener = completedListener;
+        final Request request = new Request.Builder()
+                .url( url )
+                .build();
 
+        mClient.newCall( request ).enqueue( new Callback() {
+            @Override
+            public void onFailure( Call call, IOException e ) {
+                completedListener.onCompleted( "getForceUpdateInfoFromUrl -> onFailure" );
+            }
+
+            @Override
+            public void onResponse( Call call, Response response ) throws IOException {
+                ResponseBody responseBody = response.body();
+                if ( responseBody != null ) {
+
+                    try {
+
+                        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
+                        int minSupportVersion = mJsonParseHelper.getMinSupportVersion();
+                        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
+
+                        String features = "";
+                        if ( whatsNew != null ) {
+                            for ( int i = 0; i < whatsNew.size(); i++ ) {
+                                features = features + "- " + whatsNew.get( i ) + "\n";
+                            }
+                        }
+
+                        if ( minSupportVersion != -1 ) {
+
+                            if ( currentVersionCode < minSupportVersion ) {
+
+                                mView.showForceUpdateDialogs( features, packageName );
+
+                            } else {
+                                onCompletedListener.onCompleted( "Force update is not necessary for this device" );
+                            }
+
+                        } else {
+                            completedListener.onCompleted( "minSupportVersio could not read from app" );
+                        }
+
+
+                    } catch ( JSONException e ) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    completedListener.onCompleted( "Response body is null" );
+                }
+
+            }
+        } );
     }
 
 }

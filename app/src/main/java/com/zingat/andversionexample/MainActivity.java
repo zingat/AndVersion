@@ -49,17 +49,15 @@ public class MainActivity extends AppCompatActivity {
         AndVersion andVersion = AndVersion.getInstance( MainActivity.this );
         andVersion.setActivity( MainActivity.this );
         andVersion.setUri( ANDVERSION_URL );
-        andVersion.checkUpdate( new OnCompletedListener() {
+        andVersion.checkIsThereForceUpdate( new OnCompletedListener() {
             @Override
             public void onCompleted( final String from ) {
                 runOnUiThread( new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText( MainActivity.this, "OnCompleted: " + from, Toast.LENGTH_SHORT ).show();
-
+                        Toast.makeText( MainActivity.this, from, Toast.LENGTH_SHORT ).show();
                     }
                 } );
-
             }
         } );
 
