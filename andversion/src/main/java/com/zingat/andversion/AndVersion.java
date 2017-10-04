@@ -79,7 +79,9 @@ public class AndVersion implements AndVersionContract.View {
     }
 
     public void closeDialog() {
-        this.mDialog.dismiss();
+        if ( this.mDialog != null ) {
+            this.mDialog.dismiss();
+        }
     }
 
     @Override
