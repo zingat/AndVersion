@@ -12,7 +12,7 @@ Add the dependency to your `build.gradle`:
 
 ```Gradle
 dependencies {
-    compile 'com.zingat.andversion:1.0.0'
+    compile 'com.zingat:andversion:0.1.2'
 }
 ```
 
