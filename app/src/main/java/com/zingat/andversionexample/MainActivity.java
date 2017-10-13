@@ -16,7 +16,7 @@ import com.zingat.andversion.OnCompletedListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String ANDVERSION_URL = "https://firebasestorage.googleapis.com/v0/b/zingat-libs.appspot.com/o/forceUpdate.json?alt=media&token=833d7cd9-d0a1-4e40-a142-289b3282e0e4";
+    public static final String ANDVERSION_URL = "http://andversion.com/sample/demoAndroid.json";
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -49,22 +49,13 @@ public class MainActivity extends AppCompatActivity {
 
         AndVersion.getInstance()
                 .setActivity( this )
-                .setUri( ANDVERSION_URL );
-
-//        AndVersion.getInstance()
-//                .checForceUpdate( new OnCompletedListener() {
-//                    @Override
-//                    public void onCompleted( final String from ) {
-//                        runOnUiThread( new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Toast.makeText( MainActivity.this, from, Toast.LENGTH_SHORT ).show();
-//
-//                            }
-//                        } );
-//                    }
-//                } );
-
+                .setUri( ANDVERSION_URL )
+                .checForceUpdate( new OnCompletedListener() {
+                    @Override
+                    public void onCompleted() {
+                        // Silen is golden.
+                    }
+                } );
 
     }
 
