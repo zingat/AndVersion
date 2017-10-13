@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply from: '../dependencies.gradle'
 
 ext {
     bintrayRepo = 'AndVersion'
@@ -13,7 +14,7 @@ ext {
     siteUrl = 'https://github.com/olkunmustafa/AndVersion'
     gitUrl = 'https://github.com/olkunmustafa/AndVersion.git'
 
-    libraryVersion = '0.1.2'
+    libraryVersion = versions.publishVersion
 
     developerId = 'mustafaolkun'
     developerName = 'Mustafa Olkun'
@@ -25,24 +26,16 @@ ext {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.compileSdk
+        versionCode versions.publishVersionCode
+        versionName versions.publishVersion
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+
 }
 
 dependencies {
