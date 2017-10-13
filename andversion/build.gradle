@@ -46,15 +46,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.android.support:recyclerview-v7:26.0.1'
-
     // Okhttp3
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
 
     // Material Dialogs
-    compile 'com.afollestad.material-dialogs:core:0.9.4.7'
+    compile 'com.afollestad.material-dialogs:core:0.9.3.0'
 
     // Dagger2
     compile 'com.google.dagger:dagger:2.4'
