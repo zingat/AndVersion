@@ -2,7 +2,6 @@ package com.zingat.andversion;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -10,8 +9,6 @@ import com.zingat.andversion.constants.Constants;
 
 import java.io.IOException;
 import java.util.HashMap;
-
-import javax.inject.Inject;
 
 public class AndVersion implements AndVersionContract.View {
 
