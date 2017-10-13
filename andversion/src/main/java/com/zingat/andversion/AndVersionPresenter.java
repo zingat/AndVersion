@@ -7,6 +7,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 import com.zingat.andversion.constants.Constants;
 
@@ -17,8 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.inject.Inject;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -26,7 +25,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class AndVersionPresenter implements AndVersionContract.Presenter {
+class AndVersionPresenter implements AndVersionContract.Presenter {
 
     private AndVersionContract.View mView;
     private OkHttpClient mClient;
@@ -37,29 +36,16 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
     private Activity activity;
     private OnCompletedListener mCompletedListener;
 
-    @Inject
     AndVersionPresenter() {
-        // Silent is golden.
+        this.mClient = new OkHttpClient();
+        this.mJsonParseHelper = new JsonParseHelper();
     }
-
-    @Inject
-    void setClient( OkHttpClient client ) {
-        this.mClient = client;
-    }
-
-    @Inject
-    void setJsonParseHelper( JsonParseHelper jsonParseHelper ) {
-        this.mJsonParseHelper = jsonParseHelper;
-    }
-
 
     @Override
     public void setView( AndVersionContract.View view ) {
-
         this.mView = view;
 
     }
-
 
     @Override
     public void setPackageInfoForPresenter( Activity activity ) {
@@ -126,12 +112,12 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
-            public void onFailure( Call call, IOException e ) {
+            public void onFailure( @NonNull Call call, @NonNull IOException e ) {
                 completedListener.onCompleted();
             }
 
             @Override
-            public void onResponse( Call call, Response response ) throws IOException {
+            public void onResponse( @NonNull Call call, @NonNull Response response ) throws IOException {
 
                 ResponseBody responseBody = response.body();
 
@@ -217,12 +203,12 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
-            public void onFailure( Call call, IOException e ) {
+            public void onFailure( @NonNull Call call, @NonNull IOException e ) {
                 mCompletedListener.onCompleted();
             }
 
             @Override
-            public void onResponse( Call call, Response response ) throws IOException {
+            public void onResponse( @NonNull Call call, @NonNull Response response ) throws IOException {
                 ResponseBody responseBody = response.body();
                 if ( responseBody != null ) {
 
@@ -276,12 +262,12 @@ public class AndVersionPresenter implements AndVersionContract.Presenter {
 
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
-            public void onFailure( Call call, IOException e ) {
+            public void onFailure( @NonNull Call call, @NonNull IOException e ) {
 
             }
 
             @Override
-            public void onResponse( Call call, Response response ) throws IOException {
+            public void onResponse( @NonNull Call call, @NonNull Response response ) throws IOException {
                 ResponseBody responseBody = response.body();
 
                 if ( responseBody != null ) {

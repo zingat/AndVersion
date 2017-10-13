@@ -17,11 +17,10 @@ public class AndVersion implements AndVersionContract.View {
 
     private Activity activity;
     private String uri;
-    private static AndVersion andVersion;
     private MaterialDialog mDialog;
 
-    @Inject
-    AndVersionPresenter mPresenter;
+    private static AndVersion andVersion;
+    private AndVersionPresenter mPresenter;
 
     public static AndVersion getInstance() {
         if ( andVersion == null ) {
@@ -46,11 +45,7 @@ public class AndVersion implements AndVersionContract.View {
     }
 
     private AndVersion() {
-
-        DaggerAndVersionComponent.builder()
-                .andVersionModule( new AndVersionModule() )
-                .build().inject( this );
-
+        this.mPresenter = new AndVersionPresenter();
         this.mPresenter.setView( this );
 
     }
@@ -65,17 +60,17 @@ public class AndVersion implements AndVersionContract.View {
     }
 
 
-    public void checForceUpdate( OnCompletedListener completedListener ) {
-
+    public AndVersion checForceUpdate( OnCompletedListener completedListener ) {
         this.mPresenter.getForceUpdateInfoFromUrl( uri, completedListener );
 
+        return this;
     }
 
 
-    public void checkNews() {
-
+    public AndVersion checkNews() {
         this.mPresenter.getVersionInfoFromUrl( uri );
 
+        return this;
     }
 
     public void closeDialog() {
