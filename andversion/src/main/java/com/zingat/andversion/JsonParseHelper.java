@@ -12,12 +12,12 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class JsonParseHelper {
+class JsonParseHelper {
 
 
     private JSONObject andVersionObject;
 
-    public void setAndVersionObject( JSONObject responseObjcet ) {
+    void setAndVersionObject( JSONObject responseObjcet ) {
         try {
             this.andVersionObject = responseObjcet.getJSONObject( Constants.ANDVERSION_OBJECT );
 
@@ -28,7 +28,7 @@ public class JsonParseHelper {
 
     }
 
-    public int getMinSupportVersion() {
+    int getMinSupportVersion() {
 
         try {
             return this.andVersionObject.getInt( Constants.MIN_VERSION_OBJECT );
@@ -38,7 +38,7 @@ public class JsonParseHelper {
         return -1;
     }
 
-    public int getCurrentVersion() {
+    int getCurrentVersion() {
 
         try {
             return this.andVersionObject.getInt( Constants.CURRENT_VERSION_OBJECT );
@@ -48,7 +48,7 @@ public class JsonParseHelper {
         return -1;
     }
 
-    public ArrayList< String > getWhatsNew() {
+    ArrayList< String > getWhatsNew() {
 
         ArrayList< String > whatsNewArray = new ArrayList<>();
 

@@ -6,7 +6,7 @@
 This is the library that checks updates on Google Play according to json file from url address.
 Force user to update application and show info for new version.
 
-This library uses [Material Dialog Library](https://github.com/afollestad/material-dialogs).
+> This library uses [Material Dialog Library](https://github.com/afollestad/material-dialogs).
 Thank you to [Aidan Follestad](https://github.com/afollestad)
 
 # GRADLE DEPENDENCY
@@ -15,7 +15,7 @@ Add the dependency to your `build.gradle`:
 
 ```Gradle
 dependencies {
-    compile 'com.zingat:andversion:0.1.2'
+    compile 'com.zingat:andversion:1.0.0'
 }
 ```
 
