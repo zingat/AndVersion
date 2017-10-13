@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">AndVersion</string>
+    <string name="andversion_forceupdate_title">What\'s New Waiting For You !</string>
+    <string name="andversion_whatsnew_title">Whats\'s New In This Version</string>
+    <string name="andversion_update">Update</string>
+    <string name="andversion_exit_app">Exit</string>
+    <string name="andversion_ok">Ok</string>
+
+
+    <string-array name="string_keys">
+
+        <item>andversion_forceupdate_title</item>
+        <item>andversion_whatsnew_title</item>
+        <item>andversion_update</item>
+        <item>andversion_exit_app</item>
+        <item>andversion_ok</item>
+
+    </string-array>
+
+    <string-array name="string_values">
+
+        <item>What\'s New Waiting For You !</item>
+        <item>Whats\'s New In This Version</item>
+        <item>Update</item>
+        <item>Exit</item>
+        <item>Ok</item>
+
+    </string-array>
+
 </resources>
