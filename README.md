@@ -1,4 +1,6 @@
-# ANDVERSION
+![Logo](https://raw.githubusercontent.com/zingat/andversion/dev/art/andversionLogo.png)
+
+
 <p align="start">
   <a target="_blank" href="https://android-arsenal.com/api?level=8"><img src="https://img.shields.io/badge/API-14%2B-orange.svg"></a>
 
@@ -171,3 +173,4 @@ To customize dialog title and buttons text add the following xml codes in your a
 <string name="andversion_ok">Ok</string>
 ```
 
+<img align="right" src="https://raw.githubusercontent.com/zingat/andversion/dev/art/zingatLogo.png" width="320">
