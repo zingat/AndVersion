@@ -13,8 +13,9 @@
   </a>
 </p>
 
-This is the library that checks updates on Google Play according to json file from url address.
-Force user to update application and show info for new version.
+Andversion is a public library that is written by Zingat Android Team. Fetches a json file from defined url and the library behaves based on the data in the json file. Andversion automatically saves last app version to local database and compares the version numbers that is fetched from json file. When the developer upgrade to version number, Andversion automaticly shows a dialog that is shows the Last News about app.
+
+Second feature is about force update. Force update feature can be arranged from json file again. When developer upgrade the app version on Json file, forceUpdate variable can be changed as boolean. If it is true Andversion force user to update the app by sending to Google play.
 
 > This library uses [Material Dialog Library](https://github.com/afollestad/material-dialogs).
 Thank you to [Aidan Follestad](https://github.com/afollestad)
