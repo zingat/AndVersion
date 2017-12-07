@@ -50,13 +50,22 @@ public class MainActivity extends AppCompatActivity {
         AndVersion.getInstance()
                 .setActivity( this )
                 .setUri( ANDVERSION_URL )
-                .checForceUpdate( new OnCompletedListener() {
+                .checkUpdate( new OnCompletedListener() {
                     @Override
                     public void onCompleted() {
-                        // Silen is golden.
+                        // Flow can continue without any dialog.
+                        // You can use null object instead of OnCompletedListener
                     }
                 } );
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        AndVersion.getInstance()
+                .closeDialog();
     }
 
     @Override

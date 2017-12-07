@@ -61,7 +61,7 @@ Add **INTERNET** and **ACCESS_NETWORK_STATE** permissions to your app's Manifest
 ```
 **CurrentVersion :** The version code on Google Play. The value should be integer.
 
-**MinVersion :** The lowest version code in build gradle that you want to support. The value should be integer.
+**MinVersion :** The lowest version code that you want to support. The value should be integer. If user's version is lower than **MinVersion**, AndVersion applies **forceupdate** protocol.
 
 **WhatsNew :** The list of new features to show to the user. The values should be also json object. It allows you to present new features of your application to user in different languages.
 The key of inner object should be **locale languge code** for Android and the value of inner object shoul be **string array**. For language codes glance the list in this addres:
@@ -102,10 +102,13 @@ If yes the force update dialog will be displayed. If no or there was an error on
     protected void onResume() {
         super.onResume();
 
-        AndVersion.getInstance().checkForceUpdate( new OnCompletedListener() {
+        AndVersion.getInstance()
+        .checkForceUpdate( new OnCompletedListener() {
             @Override
             public void onCompleted() {
                 // The process what you want to do after check update.
+                // This part srunsed when any dialog is not shown.
+                // In these cases you can continue to make app run.
             }
         } );
 
@@ -127,7 +130,6 @@ Add closeDialog() method in onPause() method.
 
 **checkNews() :** This method is used for showing information dialog after update. Information dialog will be displayed only once after every update.
 
-
 ```java
 @Override
     protected void onResume() {
@@ -145,11 +147,11 @@ The suggestion is to call this method in main screen.
 
 #### CALLING A SINGLE METHOD
 
-**checkUpdate() :** First of all you also initialze Andversion before call this method. 
-This method controls that user should update application. 
+**checkUpdate() :** First of all you also initialze Andversion before call **checkUpdate()** method.
+checkUpdate() method contains both behaviours of **checkNews()** and **checkForceUpdate()** methods.
 
-If yes, force update dialog will be displayed. If no, method will check is there any information about news. 
-If there are some news information dialog will be displayed if not onCompleted method will be called.
+First it checks force update conditions by checking the app version that is defined by user in gradle file and min version in json file.  
+If it not shown a force dialog second step is to check the news. Then app can resume.
 
 **Note :** When any error occurs onCompleted method will be called. 
 
