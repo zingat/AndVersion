@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.zingat.andversion.constants.Constants;
 
@@ -102,7 +103,7 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void getJsonFromUrl( String url, final OnCompletedListener completedListener ) throws IOException {
+    public void getJsonFromUrl( @NonNull String url, @Nullable final OnCompletedListener completedListener ) throws IOException {
 
         this.mCompletedListener = completedListener;
         Request request = new Request.Builder()
@@ -113,7 +114,8 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( @NonNull Call call, @NonNull IOException e ) {
-                completedListener.onCompleted();
+                if ( completedListener != null )
+                    completedListener.onCompleted();
             }
 
             @Override
@@ -139,29 +141,27 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
                         if ( currentUpdateVersion != -1 && minSupportVersion != -1 ) {
 
                             if ( currentVersionCode < minSupportVersion ) {
-
                                 mView.showForceUpdateDialogs( features, packageName );
+                                return;
 
                             } else {
 
                                 if ( !features.equals( "" ) ) {
                                     mView.checkLastSessionVersion( features, currentUpdateVersion );
-                                } else {
-                                    completedListener.onCompleted();
+
+                                    return;
                                 }
 
                             }
-                        } else {
-                            completedListener.onCompleted();
                         }
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();
-                        completedListener.onCompleted();
+
                     }
-                } else {
-                    completedListener.onCompleted();
                 }
+                if ( completedListener != null )
+                    completedListener.onCompleted();
             }
         } );
 
@@ -228,26 +228,20 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
                         if ( minSupportVersion != -1 ) {
 
                             if ( currentVersionCode < minSupportVersion ) {
-
                                 mView.showForceUpdateDialogs( features, packageName );
+                                return;
 
-                            } else {
-                                mCompletedListener.onCompleted();
                             }
 
-                        } else {
-                            mCompletedListener.onCompleted();
                         }
 
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();
-                        mCompletedListener.onCompleted();
                     }
 
-                } else {
-                    mCompletedListener.onCompleted();
                 }
+                mCompletedListener.onCompleted();
 
             }
         } );

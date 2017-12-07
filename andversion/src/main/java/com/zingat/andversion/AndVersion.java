@@ -2,6 +2,7 @@ package com.zingat.andversion;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -47,7 +48,7 @@ public class AndVersion implements AndVersionContract.View {
 
     }
 
-    public void checkUpdate( OnCompletedListener completedListener ) {
+    public void checkUpdate( @Nullable OnCompletedListener completedListener ) {
         try {
             this.mPresenter.getJsonFromUrl( uri, completedListener );
         } catch ( IOException e ) {
