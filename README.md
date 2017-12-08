@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
   <img align="middle" src="https://raw.githubusercontent.com/zingat/andversion/dev/art/andversionLogo.png">
 </p>
 
@@ -13,12 +13,16 @@
   </a>
 </p>
 
+Andversion is a powerful system for displaying dialogs about updating in Android applications.
+
+Andversion takes care of shows 'What's new' dialog automaticly, so you don't have to. It will load json file from the network then compares with local storage, and display a dialog if it is neccessary. It has two levels of scenariro; one in forceUpdate and another in only shows version update contents.
+
 Andversion is a public library that is written by Zingat Android Team. Fetches a json file from defined url and the library behaves based on the data in the json file. Andversion automatically saves last app version to local database and compares the version numbers that is fetched from json file. When the developer upgrade to version number, Andversion automaticly shows a dialog that is shows the Last News about app.
 
 Second feature is about force update. Force update feature can be arranged from json file again. When developer upgrade the app version on Json file, forceUpdate variable can be changed as boolean. If it is true Andversion force user to update the app by sending to Google play.
 
 > This library uses [Material Dialog Library](https://github.com/afollestad/material-dialogs).
-Thank you to [Aidan Follestad](https://github.com/afollestad)
+Thank you [Aidan Follestad](https://github.com/afollestad)
 
 # GRADLE DEPENDENCY
 The minimum API level supported by this library is API 14.
@@ -26,7 +30,7 @@ Add the dependency to your `build.gradle`:
 
 ```Gradle
 dependencies {
-    compile 'com.zingat:andversion:1.0.0'
+    compile 'com.zingat:andversion:1.1.0'
 }
 ```
 
@@ -59,13 +63,11 @@ Add **INTERNET** and **ACCESS_NETWORK_STATE** permissions to your app's Manifest
 }
 
 ```
-**CurrentVersion :** The version code on Google Play. The value should be integer.
+**CurrentVersion :** Your App's version code on Google Play. The value should be integer.
 
 **MinVersion :** The lowest version code that you want to support. The value should be integer. If user's version is lower than **MinVersion**, AndVersion applies **forceupdate** protocol.
 
-**WhatsNew :** The list of new features to show to the user. The values should be also json object. It allows you to present new features of your application to user in different languages.
-The key of inner object should be **locale languge code** for Android and the value of inner object shoul be **string array**. For language codes glance the list in this addres:
-https://stackoverflow.com/questions/7973023/what-is-the-list-of-supported-languages-locales-on-android
+**WhatsNew :** The list of new features to show to the user. The values should be also a json object. It allows you to present new features of your application to user in different languages.
 
 ### ANDVERSION IMPLEMENTATION
 
@@ -89,7 +91,7 @@ If you are in fragment call setActivity( getActivity ) instead of setActivity( t
 
 **Andversion_url** means the url where you keep the JSON file, like http://andversion.com/sample/demoIOS.json.
 
-**Note :** You do not have to use setUri() methods every time when you initialize. It is enough to call once.
+**Note :** You do not have to use `setUri()` methods every time when you initialize. To call once is enough. But every time you have to set `setActivity( this )`method to show dialog successfully.
 
 #### CALLING METHODS SEPARATELY
 
