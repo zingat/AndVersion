@@ -30,7 +30,7 @@ Add the dependency to your `build.gradle`:
 
 ```Gradle
 dependencies {
-    compile 'com.zingat:andversion:1.1.0'
+    compile 'com.zingat:andversion:1.1.1'
 }
 ```
 
