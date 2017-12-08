@@ -8,8 +8,8 @@ android {
         applicationId "com.zingat.andversionexample"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.compileSdk
-        versionCode versions.publishVersionCode
-        versionName versions.publishVersion
+        versionCode versions.sampleVersionCode
+        versionName versions.sampleVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -30,6 +30,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:' + versions.supportLib
     compile 'com.android.support:design:' + versions.supportLib
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    compile 'com.facebook.stetho:stetho:1.5.0'
 
     testCompile 'junit:junit:4.12'
 }

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.zingat.andversion.constants.Constants;
 
@@ -36,6 +37,9 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     private Activity activity;
     private OnCompletedListener mCompletedListener;
 
+    private int minSupportVersion;
+    private int currentUpdateVersion;
+
     AndVersionPresenter() {
         this.mClient = new OkHttpClient();
         this.mJsonParseHelper = new JsonParseHelper();
@@ -48,10 +52,14 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void setPackageInfoForPresenter( Activity activity ) {
+    public void setActivity( Activity activity ) {
+        this.activity = activity;
+    }
+
+    @Override
+    public void setPackageInfoForPresenter() {
 
         try {
-            this.activity = activity;
             PackageInfo packageInfo = this.activity.getPackageManager().getPackageInfo( activity.getPackageName(), 0 );
             this.currentVersionCode = packageInfo.versionCode;
             this.packageName = packageInfo.packageName;
@@ -63,7 +71,7 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void checkLastSessionVersion( Activity activity, String features, int currentUpdateVersion ) {
+    public void checkLastSessionVersion( String features, int currentUpdateVersion ) {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( activity );
         this.lastSessionVersion = preferences.getInt( Constants.LAST_SESSION_VERSION, 0 );
@@ -71,20 +79,17 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
         SharedPreferences.Editor editor = preferences.edit();
 
         if ( this.lastSessionVersion != this.currentVersionCode ) {
-
-            if ( this.lastSessionVersion != 0 && this.currentVersionCode <= currentUpdateVersion && this.currentVersionCode == currentUpdateVersion ) {
-
-                mView.showUpdateFeatures( features, this.mCompletedListener );
-
+            if ( this.lastSessionVersion != 0 && this.currentVersionCode == currentUpdateVersion ) {
+                mView.showNews( features, this.mCompletedListener );
 
             } else {
                 this.mCompletedListener.onCompleted();
+
             }
 
             this.lastSessionVersion = this.currentVersionCode;
             editor.putInt( Constants.LAST_SESSION_VERSION, this.lastSessionVersion );
             editor.apply();
-
 
         } else {
             this.mCompletedListener.onCompleted();
@@ -102,7 +107,7 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void getJsonFromUrl( String url, final OnCompletedListener completedListener ) throws IOException {
+    public void getJsonFromUrl( @NonNull String url, @Nullable final OnCompletedListener completedListener ) throws IOException {
 
         this.mCompletedListener = completedListener;
         Request request = new Request.Builder()
@@ -113,7 +118,13 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( @NonNull Call call, @NonNull IOException e ) {
-                completedListener.onCompleted();
+                activity.runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        if ( completedListener != null )
+                            completedListener.onCompleted();
+                    }
+                } );
             }
 
             @Override
@@ -124,78 +135,50 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
                 if ( responseBody != null ) {
                     try {
 
-                        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
-                        int minSupportVersion = mJsonParseHelper.getMinSupportVersion();
-                        int currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
-                        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
-
-                        String features = "";
-                        if ( whatsNew != null ) {
-                            for ( int i = 0; i < whatsNew.size(); i++ ) {
-                                features = features + "- " + whatsNew.get( i ) + "\n";
-                            }
-                        }
+                        final String features = parseFeaturesContent( responseBody );
 
                         if ( currentUpdateVersion != -1 && minSupportVersion != -1 ) {
+                            activity.runOnUiThread( new Runnable() {
+                                @Override
+                                public void run() {
+                                    if ( currentVersionCode < minSupportVersion ) {
+                                        mView.showForceUpdateDialogs( features, packageName );
 
-                            if ( currentVersionCode < minSupportVersion ) {
+                                    } else {
 
-                                mView.showForceUpdateDialogs( features, packageName );
+                                        if ( !features.equals( "" ) ) {
+                                            mView.checkLastSessionVersion( features, currentUpdateVersion );
 
-                            } else {
+                                        }
 
-                                if ( !features.equals( "" ) ) {
-                                    mView.checkLastSessionVersion( features, currentUpdateVersion );
-                                } else {
-                                    completedListener.onCompleted();
+                                    }
                                 }
+                            } );
 
-                            }
-                        } else {
-                            completedListener.onCompleted();
+                            return;
                         }
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();
-                        completedListener.onCompleted();
+
                     }
-                } else {
-                    completedListener.onCompleted();
                 }
+                activity.runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        if ( completedListener != null )
+                            completedListener.onCompleted();
+                    }
+                } );
+
             }
         } );
 
     }
 
     @Override
-    public HashMap< String, String > getStringValues() {
+    public void getForceUpdateInfoFromUrl( String url, @Nullable final OnCompletedListener onCompletedListener ) {
 
-        HashMap< String, String > stringValuesMap = new HashMap<>();
-
-        String[] stringKeys = this.activity.getResources().getStringArray( R.array.string_keys );
-        String[] stringValues = this.activity.getResources().getStringArray( R.array.string_values );
-
-        for ( int i = 0; i < stringKeys.length; i++ ) {
-
-            int identifier = this.activity.getResources().getIdentifier( stringKeys[i], "string", packageName );
-            String stringValue;
-
-            if ( identifier != 0 ) {
-
-                stringValue = this.activity.getResources().getString( identifier );
-                stringValuesMap.put( stringKeys[i], stringValue );
-            } else {
-
-                stringValue = stringValues[i];
-                stringValuesMap.put( stringKeys[i], stringValue );
-            }
-
-        }
-        return stringValuesMap;
-    }
-
-    @Override
-    public void getForceUpdateInfoFromUrl( String url, final OnCompletedListener onCompletedListener ) {
         this.mCompletedListener = onCompletedListener;
         Request request = new Request.Builder()
                 .url( url )
@@ -204,7 +187,13 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( @NonNull Call call, @NonNull IOException e ) {
-                mCompletedListener.onCompleted();
+                activity.runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        if ( mCompletedListener != null )
+                            mCompletedListener.onCompleted();
+                    }
+                } );
             }
 
             @Override
@@ -213,41 +202,37 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
                 if ( responseBody != null ) {
 
                     try {
-
-                        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
-                        int minSupportVersion = mJsonParseHelper.getMinSupportVersion();
-                        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
-
-                        String features = "";
-                        if ( whatsNew != null ) {
-                            for ( int i = 0; i < whatsNew.size(); i++ ) {
-                                features = features + "- " + whatsNew.get( i ) + "\n";
-                            }
-                        }
+                        final String features = parseFeaturesContent( responseBody );
 
                         if ( minSupportVersion != -1 ) {
 
                             if ( currentVersionCode < minSupportVersion ) {
+                                activity.runOnUiThread( new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mView.showForceUpdateDialogs( features, packageName );
 
-                                mView.showForceUpdateDialogs( features, packageName );
+                                    }
+                                } );
+                                return;
 
-                            } else {
-                                mCompletedListener.onCompleted();
                             }
 
-                        } else {
-                            mCompletedListener.onCompleted();
                         }
 
 
                     } catch ( JSONException e ) {
                         e.printStackTrace();
-                        mCompletedListener.onCompleted();
                     }
 
-                } else {
-                    mCompletedListener.onCompleted();
                 }
+                activity.runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        if ( mCompletedListener != null )
+                            mCompletedListener.onCompleted();
+                    }
+                } );
 
             }
         } );
@@ -263,7 +248,7 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( @NonNull Call call, @NonNull IOException e ) {
-
+                e.printStackTrace();
             }
 
             @Override
@@ -272,27 +257,14 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
                 if ( responseBody != null ) {
                     try {
-
-                        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
-                        int currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
-                        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
-
-                        String features = "";
-                        if ( whatsNew != null ) {
-                            for ( int i = 0; i < whatsNew.size(); i++ ) {
-                                features = features + "- " + whatsNew.get( i ) + "\n";
-                            }
-                        }
-
+                        String features = parseFeaturesContent( responseBody );
                         if ( currentUpdateVersion != -1 && !features.equals( "" ) ) {
-
                             mView.checkNewsLastSessionVersion( features, currentUpdateVersion );
-
                         }
+
                     } catch ( JSONException e ) {
                         e.printStackTrace();
                     }
-
                 }
             }
         } );
@@ -300,9 +272,9 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void checkNewsLastSessionVersion( Activity activity, String features, int currentUpdateVersion ) {
+    public void checkNewsLastSessionVersion( final String features, int currentUpdateVersion ) {
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( activity );
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( this.activity );
         this.lastSessionVersion = preferences.getInt( Constants.LAST_SESSION_VERSION, 0 );
 
         SharedPreferences.Editor editor = preferences.edit();
@@ -311,8 +283,12 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
             if ( this.lastSessionVersion != 0 && this.currentVersionCode <= currentUpdateVersion && this.currentVersionCode == currentUpdateVersion ) {
 
-                mView.showNews( features );
-
+                this.activity.runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        mView.showNews( features );
+                    }
+                } );
             }
 
             this.lastSessionVersion = this.currentVersionCode;
@@ -320,6 +296,23 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
             editor.apply();
 
         }
+    }
+
+    private String parseFeaturesContent( ResponseBody responseBody ) throws IOException, JSONException {
+
+        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
+        minSupportVersion = mJsonParseHelper.getMinSupportVersion();
+        currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
+        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
+
+        StringBuilder features = new StringBuilder();
+        if ( whatsNew != null ) {
+            for ( int i = 0; i < whatsNew.size(); i++ ) {
+                features.append( "- " ).append( whatsNew.get( i ) ).append( "\n" );
+            }
+        }
+
+        return features.toString();
     }
 
 }
