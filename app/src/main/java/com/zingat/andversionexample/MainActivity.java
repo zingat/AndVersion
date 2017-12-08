@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zingat.andversion.AndVersion;
@@ -18,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String ANDVERSION_URL = "http://andversion.com/sample/demoAndroid.json";
 
+    private TextView operationCompleted;
+
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
@@ -25,23 +28,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = ( Toolbar ) findViewById( R.id.toolbar );
         setSupportActionBar( toolbar );
 
-        FloatingActionButton fab = ( FloatingActionButton ) findViewById( R.id.fab );
-        fab.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick( View view ) {
-                Snackbar.make( view, "Replace with your own action", Snackbar.LENGTH_LONG )
-                        .setAction( "Action", null ).show();
-            }
-        } );
-
+        this.operationCompleted = ( TextView ) findViewById( R.id.operation_completed );
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
 
     @Override
     protected void onResume() {
@@ -55,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onCompleted() {
                         // Flow can continue without any dialog.
                         // You can use null object instead of OnCompletedListener
+
+                        operationCompleted.setText( "Operation Completed!" );
                     }
                 } );
 
