@@ -36,8 +36,6 @@ public interface AndVersionContract {
 
         void sendUserToGooglePlay( String packageName );
 
-        HashMap< String, String > getStringValues();
-
         void getForceUpdateInfoFromUrl( String url, OnCompletedListener onCompletedListener );
 
         void getVersionInfoFromUrl( String url );

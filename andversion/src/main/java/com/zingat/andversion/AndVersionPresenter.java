@@ -177,33 +177,6 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public HashMap< String, String > getStringValues() {
-
-        HashMap< String, String > stringValuesMap = new HashMap<>();
-
-        String[] stringKeys = this.activity.getResources().getStringArray( R.array.string_keys );
-        String[] stringValues = this.activity.getResources().getStringArray( R.array.string_values );
-
-        for ( int i = 0; i < stringKeys.length; i++ ) {
-
-            int identifier = this.activity.getResources().getIdentifier( stringKeys[i], "string", packageName );
-            String stringValue;
-
-            if ( identifier != 0 ) {
-
-                stringValue = this.activity.getResources().getString( identifier );
-                stringValuesMap.put( stringKeys[i], stringValue );
-            } else {
-
-                stringValue = stringValues[i];
-                stringValuesMap.put( stringKeys[i], stringValue );
-            }
-
-        }
-        return stringValuesMap;
-    }
-
-    @Override
     public void getForceUpdateInfoFromUrl( String url, @Nullable final OnCompletedListener onCompletedListener ) {
 
         this.mCompletedListener = onCompletedListener;

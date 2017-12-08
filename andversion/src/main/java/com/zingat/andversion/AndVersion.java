@@ -6,10 +6,8 @@ import android.support.annotation.Nullable;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.zingat.andversion.constants.Constants;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 public class AndVersion implements AndVersionContract.View {
 
@@ -107,18 +105,15 @@ public class AndVersion implements AndVersionContract.View {
     @Override
     public void showForceUpdateDialogs( final String whatsNew, final String packageName ) {
 
-        final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
-
-        mDialog = new MaterialDialog.Builder( activity )
+        this.mDialog = new MaterialDialog.Builder( activity )
                 .cancelable( false )
-                .title( stringValuesMap.get( Constants.ANDVERSION_FORCEUPDATE_TITLE ) )
+                .title( R.string.andversion_forceupdate_title )
                 .content( whatsNew )
-                .positiveText( stringValuesMap.get( Constants.ANDVERSION_UPDATE ) )
-                .negativeText( stringValuesMap.get( Constants.ANDVERSION_EXIT_APP ) )
+                .positiveText( R.string.andversion_ok )
+                .negativeText( R.string.andversion_exit_app )
                 .onNegative( new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
-
                         activity.finish();
 
                     }
@@ -126,7 +121,6 @@ public class AndVersion implements AndVersionContract.View {
                 .onPositive( new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
-
                         mPresenter.sendUserToGooglePlay( packageName );
 
                     }
@@ -137,25 +131,23 @@ public class AndVersion implements AndVersionContract.View {
 
     @Override
     public void checkLastSessionVersion( String features, int currentUpdateVersion ) {
-        mPresenter.checkLastSessionVersion( features, currentUpdateVersion );
+        this.mPresenter.checkLastSessionVersion( features, currentUpdateVersion );
     }
 
     @Override
     public void checkNewsLastSessionVersion( String features, int currentUdateVersion ) {
-        mPresenter.checkNewsLastSessionVersion( features, currentUdateVersion );
+        this.mPresenter.checkNewsLastSessionVersion( features, currentUdateVersion );
 
     }
 
     @Override
     public void showNews( final String features, @Nullable final OnCompletedListener completedListener ) {
 
-        final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
-
-        mDialog = new MaterialDialog.Builder( activity )
+        this.mDialog = new MaterialDialog.Builder( this.activity )
                 .cancelable( false )
-                .title( stringValuesMap.get( Constants.ANDVERSION_WHATSNEW_TITLE ) )
+                .title( R.string.andversion_forceupdate_title )
                 .content( features )
-                .positiveText( stringValuesMap.get( Constants.ANDVERSION_OK ) )
+                .positiveText(  R.string.andversion_ok )
                 .onPositive( new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
