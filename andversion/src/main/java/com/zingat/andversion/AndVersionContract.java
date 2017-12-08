@@ -26,9 +26,11 @@ public interface AndVersionContract {
 
         void setView( View view );
 
+        void setActivity( Activity activity );
+
         void getJsonFromUrl( String url, OnCompletedListener onCompletedListener ) throws IOException;
 
-        void setPackageInfoForPresenter( Activity activity );
+        void setPackageInfoForPresenter();
 
         void checkLastSessionVersion( Activity activity, String features, int currentUpdateVersion );
 
@@ -40,7 +42,7 @@ public interface AndVersionContract {
 
         void getVersionInfoFromUrl( String url );
 
-        void checkNewsLastSessionVersion( Activity activity, String features, int currentUpdateVersion );
+        void checkNewsLastSessionVersion( String features, int currentUpdateVersion );
 
 
     }

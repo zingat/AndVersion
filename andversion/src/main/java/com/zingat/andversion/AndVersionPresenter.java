@@ -6,6 +6,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,6 +41,20 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     private Activity activity;
     private OnCompletedListener mCompletedListener;
 
+    private int minSupportVersion;
+    private int currentUpdateVersion;
+
+    private Bundle extras = new Bundle();
+
+    private Handler handler = new Handler( Looper.getMainLooper() ) {
+
+        @Override
+        public void handleMessage( Message msg ) {
+            super.handleMessage( msg );
+
+        }
+    };
+
     AndVersionPresenter() {
         this.mClient = new OkHttpClient();
         this.mJsonParseHelper = new JsonParseHelper();
@@ -49,10 +67,14 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void setPackageInfoForPresenter( Activity activity ) {
+    public void setActivity( Activity activity ) {
+        this.activity = activity;
+    }
+
+    @Override
+    public void setPackageInfoForPresenter() {
 
         try {
-            this.activity = activity;
             PackageInfo packageInfo = this.activity.getPackageManager().getPackageInfo( activity.getPackageName(), 0 );
             this.currentVersionCode = packageInfo.versionCode;
             this.packageName = packageInfo.packageName;
@@ -127,8 +149,9 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
                     try {
 
                         mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
-                        int minSupportVersion = mJsonParseHelper.getMinSupportVersion();
-                        int currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
+                        minSupportVersion = mJsonParseHelper.getMinSupportVersion();
+                        currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
+
                         ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
 
                         String features = "";
@@ -196,6 +219,7 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
     @Override
     public void getForceUpdateInfoFromUrl( String url, final OnCompletedListener onCompletedListener ) {
+
         this.mCompletedListener = onCompletedListener;
         Request request = new Request.Builder()
                 .url( url )
@@ -257,7 +281,7 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( @NonNull Call call, @NonNull IOException e ) {
-
+                e.printStackTrace();
             }
 
             @Override
@@ -266,27 +290,14 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
                 if ( responseBody != null ) {
                     try {
-
-                        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
-                        int currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
-                        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
-
-                        String features = "";
-                        if ( whatsNew != null ) {
-                            for ( int i = 0; i < whatsNew.size(); i++ ) {
-                                features = features + "- " + whatsNew.get( i ) + "\n";
-                            }
-                        }
-
+                        String features = parseFeaturesContent( responseBody );
                         if ( currentUpdateVersion != -1 && !features.equals( "" ) ) {
-
                             mView.checkNewsLastSessionVersion( features, currentUpdateVersion );
-
                         }
+
                     } catch ( JSONException e ) {
                         e.printStackTrace();
                     }
-
                 }
             }
         } );
@@ -294,9 +305,9 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void checkNewsLastSessionVersion( Activity activity, String features, int currentUpdateVersion ) {
+    public void checkNewsLastSessionVersion( final String features, int currentUpdateVersion ) {
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( activity );
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( this.activity );
         this.lastSessionVersion = preferences.getInt( Constants.LAST_SESSION_VERSION, 0 );
 
         SharedPreferences.Editor editor = preferences.edit();
@@ -305,8 +316,12 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
             if ( this.lastSessionVersion != 0 && this.currentVersionCode <= currentUpdateVersion && this.currentVersionCode == currentUpdateVersion ) {
 
-                mView.showNews( features );
-
+                this.activity.runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        mView.showNews( features );
+                    }
+                } );
             }
 
             this.lastSessionVersion = this.currentVersionCode;
@@ -314,6 +329,23 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
             editor.apply();
 
         }
+    }
+
+    private String parseFeaturesContent( ResponseBody responseBody ) throws IOException, JSONException {
+
+        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
+        minSupportVersion = mJsonParseHelper.getMinSupportVersion();
+        currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
+        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
+
+        StringBuilder features = new StringBuilder();
+        if ( whatsNew != null ) {
+            for ( int i = 0; i < whatsNew.size(); i++ ) {
+                features.append( "- " ).append( whatsNew.get( i ) ).append( "\n" );
+            }
+        }
+
+        return features.toString();
     }
 
 }
