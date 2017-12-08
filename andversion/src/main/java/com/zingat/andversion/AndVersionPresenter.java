@@ -6,10 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -44,17 +40,6 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     private int minSupportVersion;
     private int currentUpdateVersion;
 
-    private Bundle extras = new Bundle();
-
-    private Handler handler = new Handler( Looper.getMainLooper() ) {
-
-        @Override
-        public void handleMessage( Message msg ) {
-            super.handleMessage( msg );
-
-        }
-    };
-
     AndVersionPresenter() {
         this.mClient = new OkHttpClient();
         this.mJsonParseHelper = new JsonParseHelper();
@@ -86,7 +71,7 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void checkLastSessionVersion( Activity activity, String features, int currentUpdateVersion ) {
+    public void checkLastSessionVersion( String features, int currentUpdateVersion ) {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences( activity );
         this.lastSessionVersion = preferences.getInt( Constants.LAST_SESSION_VERSION, 0 );
@@ -94,20 +79,17 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
         SharedPreferences.Editor editor = preferences.edit();
 
         if ( this.lastSessionVersion != this.currentVersionCode ) {
-
             if ( this.lastSessionVersion != 0 && this.currentVersionCode == currentUpdateVersion ) {
-
-                mView.showUpdateFeatures( features, this.mCompletedListener );
-
+                mView.showNews( features, this.mCompletedListener );
 
             } else {
                 this.mCompletedListener.onCompleted();
+
             }
 
             this.lastSessionVersion = this.currentVersionCode;
             editor.putInt( Constants.LAST_SESSION_VERSION, this.lastSessionVersion );
             editor.apply();
-
 
         } else {
             this.mCompletedListener.onCompleted();
@@ -136,8 +118,13 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( @NonNull Call call, @NonNull IOException e ) {
-                if ( completedListener != null )
-                    completedListener.onCompleted();
+                activity.runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        if ( completedListener != null )
+                            completedListener.onCompleted();
+                    }
+                } );
             }
 
             @Override
@@ -148,34 +135,27 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
                 if ( responseBody != null ) {
                     try {
 
-                        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
-                        minSupportVersion = mJsonParseHelper.getMinSupportVersion();
-                        currentUpdateVersion = mJsonParseHelper.getCurrentVersion();
-
-                        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
-
-                        String features = "";
-                        if ( whatsNew != null ) {
-                            for ( int i = 0; i < whatsNew.size(); i++ ) {
-                                features = features + "- " + whatsNew.get( i ) + "\n";
-                            }
-                        }
+                        final String features = parseFeaturesContent( responseBody );
 
                         if ( currentUpdateVersion != -1 && minSupportVersion != -1 ) {
+                            activity.runOnUiThread( new Runnable() {
+                                @Override
+                                public void run() {
+                                    if ( currentVersionCode < minSupportVersion ) {
+                                        mView.showForceUpdateDialogs( features, packageName );
 
-                            if ( currentVersionCode < minSupportVersion ) {
-                                mView.showForceUpdateDialogs( features, packageName );
-                                return;
+                                    } else {
 
-                            } else {
+                                        if ( !features.equals( "" ) ) {
+                                            mView.checkLastSessionVersion( features, currentUpdateVersion );
 
-                                if ( !features.equals( "" ) ) {
-                                    mView.checkLastSessionVersion( features, currentUpdateVersion );
+                                        }
 
-                                    return;
+                                    }
                                 }
+                            } );
 
-                            }
+                            return;
                         }
 
                     } catch ( JSONException e ) {
@@ -183,8 +163,14 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
                     }
                 }
-                if ( completedListener != null )
-                    completedListener.onCompleted();
+                activity.runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        if ( completedListener != null )
+                            completedListener.onCompleted();
+                    }
+                } );
+
             }
         } );
 
@@ -218,7 +204,7 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
-    public void getForceUpdateInfoFromUrl( String url, final OnCompletedListener onCompletedListener ) {
+    public void getForceUpdateInfoFromUrl( String url, @Nullable final OnCompletedListener onCompletedListener ) {
 
         this.mCompletedListener = onCompletedListener;
         Request request = new Request.Builder()
@@ -228,7 +214,13 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
         mClient.newCall( request ).enqueue( new Callback() {
             @Override
             public void onFailure( @NonNull Call call, @NonNull IOException e ) {
-                mCompletedListener.onCompleted();
+                activity.runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        if ( mCompletedListener != null )
+                            mCompletedListener.onCompleted();
+                    }
+                } );
             }
 
             @Override
@@ -237,22 +229,18 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
                 if ( responseBody != null ) {
 
                     try {
-
-                        mJsonParseHelper.setAndVersionObject( new JSONObject( responseBody.string() ) );
-                        int minSupportVersion = mJsonParseHelper.getMinSupportVersion();
-                        ArrayList< String > whatsNew = mJsonParseHelper.getWhatsNew();
-
-                        String features = "";
-                        if ( whatsNew != null ) {
-                            for ( int i = 0; i < whatsNew.size(); i++ ) {
-                                features = features + "- " + whatsNew.get( i ) + "\n";
-                            }
-                        }
+                        final String features = parseFeaturesContent( responseBody );
 
                         if ( minSupportVersion != -1 ) {
 
                             if ( currentVersionCode < minSupportVersion ) {
-                                mView.showForceUpdateDialogs( features, packageName );
+                                activity.runOnUiThread( new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mView.showForceUpdateDialogs( features, packageName );
+
+                                    }
+                                } );
                                 return;
 
                             }
@@ -265,7 +253,13 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
                     }
 
                 }
-                mCompletedListener.onCompleted();
+                activity.runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+                        if ( mCompletedListener != null )
+                            mCompletedListener.onCompleted();
+                    }
+                } );
 
             }
         } );

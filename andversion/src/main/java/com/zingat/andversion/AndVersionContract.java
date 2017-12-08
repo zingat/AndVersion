@@ -16,7 +16,7 @@ public interface AndVersionContract {
 
         void checkNewsLastSessionVersion( String features, int currentUdateVersion );
 
-        void showUpdateFeatures( String features, OnCompletedListener completedListener );
+        void showNews( String features, OnCompletedListener completedListener );
 
         void showNews( String features );
 
@@ -32,7 +32,7 @@ public interface AndVersionContract {
 
         void setPackageInfoForPresenter();
 
-        void checkLastSessionVersion( Activity activity, String features, int currentUpdateVersion );
+        void checkLastSessionVersion( String features, int currentUpdateVersion );
 
         void sendUserToGooglePlay( String packageName );
 

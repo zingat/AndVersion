@@ -109,42 +109,35 @@ public class AndVersion implements AndVersionContract.View {
 
         final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
 
-        activity.runOnUiThread( new Runnable() {
-            @Override
-            public void run() {
+        mDialog = new MaterialDialog.Builder( activity )
+                .cancelable( false )
+                .title( stringValuesMap.get( Constants.ANDVERSION_FORCEUPDATE_TITLE ) )
+                .content( whatsNew )
+                .positiveText( stringValuesMap.get( Constants.ANDVERSION_UPDATE ) )
+                .negativeText( stringValuesMap.get( Constants.ANDVERSION_EXIT_APP ) )
+                .onNegative( new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
 
-                mDialog = new MaterialDialog.Builder( activity )
-                        .cancelable( false )
-                        .title( stringValuesMap.get( Constants.ANDVERSION_FORCEUPDATE_TITLE ) )
-                        .content( whatsNew )
-                        .positiveText( stringValuesMap.get( Constants.ANDVERSION_UPDATE ) )
-                        .negativeText( stringValuesMap.get( Constants.ANDVERSION_EXIT_APP ) )
-                        .onNegative( new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
+                        activity.finish();
 
-                                activity.finish();
+                    }
+                } )
+                .onPositive( new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
 
-                            }
-                        } )
-                        .onPositive( new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
+                        mPresenter.sendUserToGooglePlay( packageName );
 
-                                mPresenter.sendUserToGooglePlay( packageName );
-
-                            }
-                        } )
-                        .show();
-            }
-        } );
-
+                    }
+                } )
+                .show();
 
     }
 
     @Override
     public void checkLastSessionVersion( String features, int currentUpdateVersion ) {
-        mPresenter.checkLastSessionVersion( this.activity, features, currentUpdateVersion );
+        mPresenter.checkLastSessionVersion( features, currentUpdateVersion );
     }
 
     @Override
@@ -154,40 +147,28 @@ public class AndVersion implements AndVersionContract.View {
     }
 
     @Override
-    public void showUpdateFeatures( final String features, final OnCompletedListener completedListener ) {
+    public void showNews( final String features, @Nullable final OnCompletedListener completedListener ) {
 
         final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
 
-        activity.runOnUiThread( new Runnable() {
-            @Override
-            public void run() {
-
-                mDialog = new MaterialDialog.Builder( activity )
-                        .cancelable( false )
-                        .title( stringValuesMap.get( Constants.ANDVERSION_WHATSNEW_TITLE ) )
-                        .content( features )
-                        .positiveText( stringValuesMap.get( Constants.ANDVERSION_OK ) )
-                        .onPositive( new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
-                                completedListener.onCompleted();
-                            }
-                        } )
-                        .show();
-            }
-        } );
-
-    }
-
-    @Override
-    public void showNews( final String features ) {
-
-        final HashMap< String, String > stringValuesMap = mPresenter.getStringValues();
         mDialog = new MaterialDialog.Builder( activity )
                 .cancelable( false )
                 .title( stringValuesMap.get( Constants.ANDVERSION_WHATSNEW_TITLE ) )
                 .content( features )
                 .positiveText( stringValuesMap.get( Constants.ANDVERSION_OK ) )
+                .onPositive( new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
+                        if ( completedListener != null )
+                            completedListener.onCompleted();
+                    }
+                } )
                 .show();
+    }
+
+    @Override
+    public void showNews( final String features ) {
+        this.showNews( features, null );
+
     }
 }
