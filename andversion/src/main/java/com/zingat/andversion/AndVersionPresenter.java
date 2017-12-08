@@ -73,7 +73,7 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
         if ( this.lastSessionVersion != this.currentVersionCode ) {
 
-            if ( this.lastSessionVersion != 0 && this.currentVersionCode <= currentUpdateVersion && this.currentVersionCode == currentUpdateVersion ) {
+            if ( this.lastSessionVersion != 0 && this.currentVersionCode == currentUpdateVersion ) {
 
                 mView.showUpdateFeatures( features, this.mCompletedListener );
 

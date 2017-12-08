@@ -1,6 +1,9 @@
 package com.zingat.andversion;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -23,7 +26,6 @@ public class AndVersion implements AndVersionContract.View {
     public static AndVersion getInstance() {
         if ( andVersion == null ) {
             andVersion = new AndVersion();
-
         }
 
         return andVersion;
@@ -56,7 +58,6 @@ public class AndVersion implements AndVersionContract.View {
         }
 
     }
-
 
     public AndVersion checForceUpdate( OnCompletedListener completedListener ) {
         this.mPresenter.getForceUpdateInfoFromUrl( uri, completedListener );
