@@ -23,6 +23,7 @@ class JsonParseHelper {
 
         } catch ( JSONException e ) {
             e.printStackTrace();
+            this.andVersionObject = new JSONObject();
 
         }
 
@@ -31,20 +32,32 @@ class JsonParseHelper {
     int getMinSupportVersion() {
 
         try {
-            return this.andVersionObject.getInt( Constants.MIN_VERSION_OBJECT );
+            if ( this.andVersionObject.has( Constants.MIN_VERSION_OBJECT ) ) {
+                return this.andVersionObject.getInt( Constants.MIN_VERSION_OBJECT );
+            }
+
         } catch ( JSONException e ) {
             e.printStackTrace();
+        } catch ( NullPointerException e ) {
+            e.printStackTrace();
         }
+
         return -1;
     }
 
     int getCurrentVersion() {
 
         try {
-            return this.andVersionObject.getInt( Constants.CURRENT_VERSION_OBJECT );
+            if ( this.andVersionObject.has( Constants.CURRENT_VERSION_OBJECT ) ) {
+                return this.andVersionObject.getInt( Constants.CURRENT_VERSION_OBJECT );
+            }
+
         } catch ( JSONException e ) {
             e.printStackTrace();
+        } catch ( NullPointerException e ) {
+            e.printStackTrace();
         }
+
         return -1;
     }
 

@@ -59,7 +59,16 @@ public class AndVersion implements AndVersionContract.View {
      * @return Self
      */
     public AndVersion checkForceUpdate( OnCompletedListener completedListener ) {
-        this.mPresenter.getForceUpdateInfoFromUrl( uri, completedListener );
+        try {
+            this.mPresenter.getJsonFromUrl( this.uri, completedListener, new IServerResponseListener() {
+                @Override
+                public void onParsedData( ParsedContentModel content ) {
+                    mPresenter.checkForceUpdate( content );
+                }
+            } );
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
 
         return this;
     }
@@ -73,7 +82,16 @@ public class AndVersion implements AndVersionContract.View {
      * @return Self
      */
     public AndVersion checkNews() {
-        this.mPresenter.getVersionInfoFromUrl( uri );
+        try {
+            this.mPresenter.getJsonFromUrl( uri, null, new IServerResponseListener() {
+                @Override
+                public void onParsedData( ParsedContentModel content ) {
+                    mPresenter.checkNewVersionFeatures( content );
+                }
+            } );
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
 
         return this;
     }
@@ -83,14 +101,22 @@ public class AndVersion implements AndVersionContract.View {
      * {@link AndVersion#checkForceUpdate(OnCompletedListener)} and {@link AndVersion#checkNews()}
      *
      * @param completedListener Listener that provides to allow to user to resume app after dialog operations.
+     * @return Self
      */
-    public void checkUpdate( @Nullable OnCompletedListener completedListener ) {
+    public AndVersion checkUpdate( @Nullable OnCompletedListener completedListener ) {
         try {
-            this.mPresenter.getJsonFromUrl( uri, completedListener );
+            this.mPresenter.getJsonFromUrl( uri, completedListener, new IServerResponseListener() {
+                @Override
+                public void onParsedData( ParsedContentModel content ) {
+                    mPresenter.checkUpdateRules( content );
+                }
+            } );
+
         } catch ( IOException e ) {
             e.printStackTrace();
         }
 
+        return this;
     }
 
     /**
@@ -103,7 +129,7 @@ public class AndVersion implements AndVersionContract.View {
     }
 
     @Override
-    public void showForceUpdateDialogs( final String whatsNew, final String packageName ) {
+    public void showForceUpdateDialog( final String whatsNew, final String packageName ) {
 
         this.mDialog = new MaterialDialog.Builder( activity )
                 .cancelable( false )
@@ -130,24 +156,13 @@ public class AndVersion implements AndVersionContract.View {
     }
 
     @Override
-    public void checkLastSessionVersion( String features, int currentUpdateVersion ) {
-        this.mPresenter.checkLastSessionVersion( features, currentUpdateVersion );
-    }
-
-    @Override
-    public void checkNewsLastSessionVersion( String features, int currentUdateVersion ) {
-        this.mPresenter.checkNewsLastSessionVersion( features, currentUdateVersion );
-
-    }
-
-    @Override
     public void showNews( final String features, @Nullable final OnCompletedListener completedListener ) {
 
         this.mDialog = new MaterialDialog.Builder( this.activity )
                 .cancelable( false )
                 .title( R.string.andversion_forceupdate_title )
                 .content( features )
-                .positiveText(  R.string.andversion_ok )
+                .positiveText( R.string.andversion_ok )
                 .onPositive( new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick( @NonNull MaterialDialog dialog, @NonNull DialogAction which ) {
