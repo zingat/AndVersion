@@ -10,11 +10,7 @@ public interface AndVersionContract {
 
     interface View {
 
-        void showForceUpdateDialogs( String whatsNew, String packageName );
-
-        void checkLastSessionVersion( String features, int currentUdateVersion );
-
-        void checkNewsLastSessionVersion( String features, int currentUdateVersion );
+        void showForceUpdateDialog( String whatsNew, String packageName );
 
         void showNews( String features, OnCompletedListener completedListener );
 
@@ -28,20 +24,17 @@ public interface AndVersionContract {
 
         void setActivity( Activity activity );
 
-        void getJsonFromUrl( String url, OnCompletedListener onCompletedListener ) throws IOException;
-
         void setPackageInfoForPresenter();
 
-        void checkLastSessionVersion( String features, int currentUpdateVersion );
+        void getJsonFromUrl( String url, OnCompletedListener onCompletedListener, IServerResponseListener serverResponseListener ) throws IOException;
 
         void sendUserToGooglePlay( String packageName );
 
-        void getForceUpdateInfoFromUrl( String url, OnCompletedListener onCompletedListener );
+        void checkUpdateRules( ParsedContentModel parsedContentModel );
 
-        void getVersionInfoFromUrl( String url );
+        void checkNewVersionFeatures( ParsedContentModel parsedContentModel );
 
-        void checkNewsLastSessionVersion( String features, int currentUpdateVersion );
-
+        void checkForceUpdate( ParsedContentModel parsedContentModel );
 
     }
 }
