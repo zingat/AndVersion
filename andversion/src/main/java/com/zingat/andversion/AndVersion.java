@@ -87,6 +87,7 @@ public class AndVersion implements AndVersionContract.View {
     public void checkUpdate( @Nullable OnCompletedListener completedListener ) {
         try {
             this.mPresenter.getJsonFromUrl( uri, completedListener );
+
         } catch ( IOException e ) {
             e.printStackTrace();
         }

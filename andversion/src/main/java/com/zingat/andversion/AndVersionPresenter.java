@@ -109,165 +109,196 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     @Override
     public void getJsonFromUrl( @NonNull String url, @Nullable final OnCompletedListener completedListener ) throws IOException {
 
-        this.mCompletedListener = completedListener;
-        Request request = new Request.Builder()
-                .url( url )
-                .build();
+        try {
+
+            this.mCompletedListener = completedListener;
+            Request request = new Request.Builder()
+                    .url( url )
+                    .build();
 
 
-        mClient.newCall( request ).enqueue( new Callback() {
-            @Override
-            public void onFailure( @NonNull Call call, @NonNull IOException e ) {
-                activity.runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        if ( completedListener != null )
-                            completedListener.onCompleted();
-                    }
-                } );
-            }
+            mClient.newCall( request ).enqueue( new Callback() {
+                @Override
+                public void onFailure( @NonNull Call call, @NonNull IOException e ) {
+                    activity.runOnUiThread( new Runnable() {
+                        @Override
+                        public void run() {
+                            if ( completedListener != null )
+                                completedListener.onCompleted();
+                        }
+                    } );
+                }
 
-            @Override
-            public void onResponse( @NonNull Call call, @NonNull Response response ) throws IOException {
+                @Override
+                public void onResponse( @NonNull Call call, @NonNull Response response ) throws IOException {
 
-                ResponseBody responseBody = response.body();
+                    ResponseBody responseBody = response.body();
 
-                if ( responseBody != null ) {
-                    try {
+                    if ( responseBody != null ) {
+                        try {
 
-                        final String features = parseFeaturesContent( responseBody );
+                            final String features = parseFeaturesContent( responseBody );
 
-                        if ( currentUpdateVersion != -1 && minSupportVersion != -1 ) {
-                            activity.runOnUiThread( new Runnable() {
-                                @Override
-                                public void run() {
-                                    if ( currentVersionCode < minSupportVersion ) {
-                                        mView.showForceUpdateDialogs( features, packageName );
+                            if ( currentUpdateVersion != -1 && minSupportVersion != -1 ) {
+                                activity.runOnUiThread( new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if ( currentVersionCode < minSupportVersion ) {
+                                            mView.showForceUpdateDialogs( features, packageName );
 
-                                    } else {
+                                        } else {
 
-                                        if ( !features.equals( "" ) ) {
-                                            mView.checkLastSessionVersion( features, currentUpdateVersion );
+                                            if ( !features.equals( "" ) ) {
+                                                mView.checkLastSessionVersion( features, currentUpdateVersion );
+
+                                            }
 
                                         }
-
                                     }
-                                }
-                            } );
+                                } );
 
-                            return;
+                                return;
+                            }
+
+                        } catch ( JSONException e ) {
+                            e.printStackTrace();
+
                         }
-
-                    } catch ( JSONException e ) {
-                        e.printStackTrace();
-
                     }
+                    activity.runOnUiThread( new Runnable() {
+                        @Override
+                        public void run() {
+                            if ( completedListener != null )
+                                completedListener.onCompleted();
+                        }
+                    } );
+
                 }
-                activity.runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        if ( completedListener != null )
-                            completedListener.onCompleted();
-                    }
-                } );
+            } );
 
-            }
-        } );
+        } catch ( IllegalArgumentException ex ) {
+            ex.printStackTrace();
+            activity.runOnUiThread( new Runnable() {
+                @Override
+                public void run() {
+                    if ( completedListener != null )
+                        completedListener.onCompleted();
+                }
+            } );
+        }
 
     }
 
     @Override
     public void getForceUpdateInfoFromUrl( String url, @Nullable final OnCompletedListener onCompletedListener ) {
 
-        this.mCompletedListener = onCompletedListener;
-        Request request = new Request.Builder()
-                .url( url )
-                .build();
+        try {
+            this.mCompletedListener = onCompletedListener;
+            Request request = new Request.Builder()
+                    .url( url )
+                    .build();
 
-        mClient.newCall( request ).enqueue( new Callback() {
-            @Override
-            public void onFailure( @NonNull Call call, @NonNull IOException e ) {
-                activity.runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        if ( mCompletedListener != null )
-                            mCompletedListener.onCompleted();
-                    }
-                } );
-            }
+            mClient.newCall( request ).enqueue( new Callback() {
+                @Override
+                public void onFailure( @NonNull Call call, @NonNull IOException e ) {
+                    activity.runOnUiThread( new Runnable() {
+                        @Override
+                        public void run() {
+                            if ( mCompletedListener != null )
+                                mCompletedListener.onCompleted();
+                        }
+                    } );
+                }
 
-            @Override
-            public void onResponse( @NonNull Call call, @NonNull Response response ) throws IOException {
-                ResponseBody responseBody = response.body();
-                if ( responseBody != null ) {
+                @Override
+                public void onResponse( @NonNull Call call, @NonNull Response response ) throws IOException {
+                    ResponseBody responseBody = response.body();
+                    if ( responseBody != null ) {
 
-                    try {
-                        final String features = parseFeaturesContent( responseBody );
+                        try {
+                            final String features = parseFeaturesContent( responseBody );
 
-                        if ( minSupportVersion != -1 ) {
+                            if ( minSupportVersion != -1 ) {
 
-                            if ( currentVersionCode < minSupportVersion ) {
-                                activity.runOnUiThread( new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mView.showForceUpdateDialogs( features, packageName );
+                                if ( currentVersionCode < minSupportVersion ) {
+                                    activity.runOnUiThread( new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mView.showForceUpdateDialogs( features, packageName );
 
-                                    }
-                                } );
-                                return;
+                                        }
+                                    } );
+                                    return;
+
+                                }
 
                             }
 
+
+                        } catch ( JSONException e ) {
+                            e.printStackTrace();
                         }
 
-
-                    } catch ( JSONException e ) {
-                        e.printStackTrace();
                     }
+                    activity.runOnUiThread( new Runnable() {
+                        @Override
+                        public void run() {
+                            if ( mCompletedListener != null )
+                                mCompletedListener.onCompleted();
+                        }
+                    } );
 
                 }
-                activity.runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        if ( mCompletedListener != null )
-                            mCompletedListener.onCompleted();
-                    }
-                } );
+            } );
+        } catch ( IllegalArgumentException ex ) {
+            ex.printStackTrace();
+            activity.runOnUiThread( new Runnable() {
+                @Override
+                public void run() {
+                    if ( mCompletedListener != null )
+                        mCompletedListener.onCompleted();
+                }
+            } );
 
-            }
-        } );
+        }
     }
 
     @Override
     public void getVersionInfoFromUrl( String url ) {
 
-        Request request = new Request.Builder()
-                .url( url )
-                .build();
+        try {
 
-        mClient.newCall( request ).enqueue( new Callback() {
-            @Override
-            public void onFailure( @NonNull Call call, @NonNull IOException e ) {
-                e.printStackTrace();
-            }
+            Request request = new Request.Builder()
+                    .url( url )
+                    .build();
 
-            @Override
-            public void onResponse( @NonNull Call call, @NonNull Response response ) throws IOException {
-                ResponseBody responseBody = response.body();
+            mClient.newCall( request ).enqueue( new Callback() {
+                @Override
+                public void onFailure( @NonNull Call call, @NonNull IOException e ) {
+                    e.printStackTrace();
+                }
 
-                if ( responseBody != null ) {
-                    try {
-                        String features = parseFeaturesContent( responseBody );
-                        if ( currentUpdateVersion != -1 && !features.equals( "" ) ) {
-                            mView.checkNewsLastSessionVersion( features, currentUpdateVersion );
+                @Override
+                public void onResponse( @NonNull Call call, @NonNull Response response ) throws IOException {
+                    ResponseBody responseBody = response.body();
+
+                    if ( responseBody != null ) {
+                        try {
+                            String features = parseFeaturesContent( responseBody );
+                            if ( currentUpdateVersion != -1 && !features.equals( "" ) ) {
+                                mView.checkNewsLastSessionVersion( features, currentUpdateVersion );
+                            }
+
+                        } catch ( JSONException e ) {
+                            e.printStackTrace();
                         }
-
-                    } catch ( JSONException e ) {
-                        e.printStackTrace();
                     }
                 }
-            }
-        } );
+            } );
+
+        } catch (  IllegalArgumentException ex ) {
+            ex.printStackTrace();
+        }
 
     }
 
