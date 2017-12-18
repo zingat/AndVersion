@@ -121,7 +121,8 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
             if ( this.lastSessionVersion != 0 && this.currentVersionCode == parsedContentModel.getCurrentUpdateVersion() ) {
                 mView.showNews( parsedContentModel.getFeatures(), this.mCompletedListener );
             } else {
-                this.mCompletedListener.onCompleted();
+                if ( this.mCompletedListener != null )
+                    this.mCompletedListener.onCompleted();
             }
 
             this.lastSessionVersion = this.currentVersionCode;
@@ -129,7 +130,8 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
             editor.apply();
 
         } else {
-            this.mCompletedListener.onCompleted();
+            if ( this.mCompletedListener != null )
+                this.mCompletedListener.onCompleted();
         }
 
     }
