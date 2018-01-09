@@ -4,8 +4,9 @@ ext.versions = [
         buildTools        : '25.0.1',
         publishVersion    : '1.2.1',
         publishVersionCode: 7,
-        sampleVersionCode : 5,
-        sampleVersionName : '1.0.0',
+
+        sampleVersionCode : 6,
+        sampleVersionName : '1.1.0',
 
         supportLib        : '25.3.1',
 ]
