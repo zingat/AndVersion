@@ -38,12 +38,9 @@ public class MainActivity extends AppCompatActivity {
         AndVersion.getInstance()
                 .setActivity( this )
                 .setUri( ANDVERSION_URL )
-                .checkUpdate( new OnCompletedListener() {
+                .checkForceUpdate( new OnCompletedListener() {
                     @Override
                     public void onCompleted() {
-                        // Flow can continue without any dialog.
-                        // You can use null object instead of OnCompletedListener
-
                         operationCompleted.setText( "Operation Completed!" );
                     }
                 } );

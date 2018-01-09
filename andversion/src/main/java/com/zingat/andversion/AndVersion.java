@@ -85,8 +85,13 @@ public class AndVersion implements AndVersionContract.View {
         try {
             this.mPresenter.getJsonFromUrl( uri, null, new IServerResponseListener() {
                 @Override
-                public void onParsedData( ParsedContentModel content ) {
-                    mPresenter.checkNewVersionFeatures( content );
+                public void onParsedData( final ParsedContentModel content ) {
+                    activity.runOnUiThread( new Runnable() {
+                        @Override
+                        public void run() {
+                            mPresenter.checkNewVersionFeatures( content );
+                        }
+                    } );
                 }
             } );
         } catch ( IOException e ) {
