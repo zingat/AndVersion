@@ -89,23 +89,20 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     @Override
     public void checkUpdateRules( final ParsedContentModel parsedContentModel ) {
 
-        if ( parsedContentModel.getCurrentUpdateVersion() != -1 && parsedContentModel.getMinSupportVersion() != -1 ) {
-            activity.runOnUiThread( new Runnable() {
-                @Override
-                public void run() {
+        activity.runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                if ( parsedContentModel.getCurrentUpdateVersion() != -1 && parsedContentModel.getMinSupportVersion() != -1 ) {
                     if ( currentVersionCode < parsedContentModel.getMinSupportVersion() ) {
                         mView.showForceUpdateDialog( parsedContentModel.getFeatures(), packageName );
-
-                    } else {
-                        if ( !parsedContentModel.getFeatures().equals( "" ) ) {
-                            checkNewVersionFeatures( parsedContentModel );
-
-                        }
-
+                        return;
                     }
                 }
-            } );
-        }
+
+                if ( mCompletedListener != null )
+                    mCompletedListener.onCompleted();
+            }
+        } );
 
     }
 
@@ -120,6 +117,7 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
         if ( this.lastSessionVersion != this.currentVersionCode ) {
             if ( this.lastSessionVersion != 0 && this.currentVersionCode == parsedContentModel.getCurrentUpdateVersion() ) {
                 mView.showNews( parsedContentModel.getFeatures(), this.mCompletedListener );
+
             } else {
                 if ( this.mCompletedListener != null )
                     this.mCompletedListener.onCompleted();
@@ -138,19 +136,20 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
     @Override
     public void checkForceUpdate( final ParsedContentModel parsedContentModel ) {
-
-        if ( parsedContentModel.getMinSupportVersion() != -1 ) {
-            if ( currentVersionCode < parsedContentModel.getMinSupportVersion() ) {
-                activity.runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
+        activity.runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                if ( parsedContentModel.getMinSupportVersion() != -1 ) {
+                    if ( currentVersionCode < parsedContentModel.getMinSupportVersion() ) {
                         mView.showForceUpdateDialog( parsedContentModel.getFeatures(), packageName );
-
+                        return;
                     }
-                } );
-            }
-        }
+                }
 
+                if ( mCompletedListener != null )
+                    mCompletedListener.onCompleted();
+            }
+        } );
     }
 
     @Override
