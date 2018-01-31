@@ -26,7 +26,7 @@ public interface AndVersionContract {
 
         void setPackageInfoForPresenter();
 
-        void getJsonFromUrl( String url, OnCompletedListener onCompletedListener, IServerResponseListener serverResponseListener ) throws IOException;
+        void getJsonFromUrl( OnCompletedListener onCompletedListener, IServerResponseListener serverResponseListener ) throws IOException;
 
         void sendUserToGooglePlay( String packageName );
 
@@ -36,5 +36,8 @@ public interface AndVersionContract {
 
         void checkForceUpdate( ParsedContentModel parsedContentModel );
 
+        void setUri( String uri );
+
+        void addHeader( String key, String value );
     }
 }

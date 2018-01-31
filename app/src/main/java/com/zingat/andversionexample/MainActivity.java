@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         AndVersion.getInstance()
                 .setActivity( this )
                 .setUri( ANDVERSION_URL )
+                .addHeader( "Accept", "application/json" )
                 .checkForceUpdate( new OnCompletedListener() {
                     @Override
                     public void onCompleted() {

@@ -12,7 +12,6 @@ import java.io.IOException;
 public class AndVersion implements AndVersionContract.View {
 
     private Activity activity;
-    private String uri;
     private MaterialDialog mDialog;
 
     private static AndVersion andVersion;
@@ -41,7 +40,13 @@ public class AndVersion implements AndVersionContract.View {
     }
 
     public AndVersion setUri( String uri ) {
-        this.uri = uri;
+        this.mPresenter.setUri( uri );
+
+        return this;
+    }
+
+    public AndVersion addHeader( String key, String value ){
+        this.mPresenter.addHeader( key, value );
 
         return this;
     }
@@ -60,7 +65,7 @@ public class AndVersion implements AndVersionContract.View {
      */
     public AndVersion checkForceUpdate( OnCompletedListener completedListener ) {
         try {
-            this.mPresenter.getJsonFromUrl( this.uri, completedListener, new IServerResponseListener() {
+            this.mPresenter.getJsonFromUrl( completedListener, new IServerResponseListener() {
                 @Override
                 public void onParsedData( ParsedContentModel content ) {
                     mPresenter.checkForceUpdate( content );
@@ -83,7 +88,7 @@ public class AndVersion implements AndVersionContract.View {
      */
     public AndVersion checkNews() {
         try {
-            this.mPresenter.getJsonFromUrl( uri, null, new IServerResponseListener() {
+            this.mPresenter.getJsonFromUrl(null, new IServerResponseListener() {
                 @Override
                 public void onParsedData( final ParsedContentModel content ) {
                     activity.runOnUiThread( new Runnable() {
@@ -110,7 +115,7 @@ public class AndVersion implements AndVersionContract.View {
      */
     public AndVersion checkUpdate( @Nullable OnCompletedListener completedListener ) {
         try {
-            this.mPresenter.getJsonFromUrl( uri, completedListener, new IServerResponseListener() {
+            this.mPresenter.getJsonFromUrl( completedListener, new IServerResponseListener() {
                 @Override
                 public void onParsedData( ParsedContentModel content ) {
                     mPresenter.checkUpdateRules( content );

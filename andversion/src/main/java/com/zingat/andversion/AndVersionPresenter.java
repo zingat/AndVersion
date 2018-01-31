@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.zingat.andversion.constants.Constants;
 
 import org.json.JSONException;
@@ -17,6 +18,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -28,11 +31,12 @@ import okhttp3.ResponseBody;
 class AndVersionPresenter implements AndVersionContract.Presenter {
 
     private AndVersionContract.View mView;
-    private OkHttpClient mClient;
     private String packageName;
     private Activity activity;
     private OnCompletedListener mCompletedListener;
     private ParsedContentModel parsedContentModel;
+    private String uri;
+    private HashMap< String, String > header = new HashMap<>();
 
     /**
      * Indicates application's current version code
@@ -48,7 +52,6 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
 
     AndVersionPresenter() {
-        this.mClient = new OkHttpClient();
         this.parsedContentModel = new ParsedContentModel();
     }
 
@@ -153,20 +156,42 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
     }
 
     @Override
+    public void setUri( String uri ) {
+        this.uri = uri;
+    }
+
+    @Override
+    public void addHeader( String key, String value ) {
+        this.header.put( key, value );
+    }
+
+    @Override
     public void getJsonFromUrl(
-            @NonNull String url,
             @Nullable final OnCompletedListener completedListener,
             @NonNull final IServerResponseListener serverResponseListener ) throws IOException {
-
         try {
 
             this.mCompletedListener = completedListener;
-            Request request = new Request.Builder()
-                    .url( url )
+
+            // Create OkHttp Client
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            if ( BuildConfig.DEBUG ) {
+                builder.addNetworkInterceptor( new StethoInterceptor() );
+            }
+            OkHttpClient client = builder.build();
+
+            // Create Request instance
+            Request.Builder requestBuilder = new Request.Builder();
+            if( this.header != null ){
+                for (Map.Entry<String, String> entry : this.header.entrySet()) {
+                    requestBuilder.addHeader( entry.getKey(), entry.getValue() );
+                }
+            }
+            Request request = requestBuilder
+                    .url( this.uri )
                     .build();
 
-
-            mClient.newCall( request ).enqueue( new Callback() {
+            client.newCall( request ).enqueue( new Callback() {
                 @Override
                 public void onFailure( @NonNull Call call, @NonNull IOException e ) {
                     activity.runOnUiThread( new Runnable() {
