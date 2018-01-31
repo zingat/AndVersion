@@ -30,7 +30,7 @@ Add the dependency to your `build.gradle`:
 
 ```Gradle
 dependencies {
-    compile 'com.zingat:andversion:1.2.2'
+    compile 'com.zingat:andversion:1.3.0'
 }
 ```
 
@@ -75,25 +75,24 @@ There are two way to implement AndVersion. You can check update and news separat
 
 #### INITIALIZE
 
-To initialize write Andversion write the following codes in activity or fragment where you want before use Andversion.
+Integrating with Andversion is intended to be seamless and straightforward for most existing Android applications. There is a simple initialization step which occurs in your Application class:
 ```java
 @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
-
         AndVersion.getInstance()
-                  .setActivity( this )
-                  .setUri( ANDVERSION_URL );
+                  .setUri( ANDVERSION_URL )
+                  .addHeader( "key", "value" ); 
 
 }
 ```
-If you are in fragment call setActivity( getActivity ) instead of setActivity( this ).
+To define URL and Http headers in Application class provides that they are defined only once during app lifecycle. See below for specific details on individual subsystems.
 
-**Andversion_url** means the url where you keep the JSON file, like http://andversion.com/sample/demoIOS.json.
-
-**Note :** You do not have to use `setUri()` methods every time when you initialize. To call once is enough. But every time you have to set `setActivity( this )`method to show dialog successfully.
+**Andversion_url** means the url where you keep the JSON file, like http://andversion.com/sample/demoAndroid.json.
 
 #### CALLING METHODS SEPARATELY
+
+**Note :** Every time you have to set `setActivity( this )`method to show dialog successfully in Activity or Fragment.
 
 **checkForceUpdate() :** This method controls that user version code is smaller than minimum version in JSON file.
 
@@ -105,6 +104,7 @@ If yes the force update dialog will be displayed. If no or there was an error on
         super.onResume();
 
         AndVersion.getInstance()
+        .setActivity(this)
         .checkForceUpdate( new OnCompletedListener() {
             @Override
             public void onCompleted() {
@@ -138,6 +138,7 @@ Add closeDialog() method in onPause() method.
         super.onResume();
 
         AndVersion.getInstance()
+		        .setActivity(this)
                 .checkNews();
 
 }
@@ -163,6 +164,7 @@ If it not shown a force dialog second step is to check the news. Then app can re
         super.onResume();
         
          AndVersion.getInstance()
+		        .setActivity(this)
                 .checkUpdate( new OnCompletedListener() {
                     @Override
                     public void onCompleted() {
