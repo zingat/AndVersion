@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.zingat.andversion.constants.Constants;
 
 import org.json.JSONException;
@@ -28,7 +29,6 @@ import okhttp3.ResponseBody;
 class AndVersionPresenter implements AndVersionContract.Presenter {
 
     private AndVersionContract.View mView;
-    private OkHttpClient mClient;
     private String packageName;
     private Activity activity;
     private OnCompletedListener mCompletedListener;
@@ -48,7 +48,6 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
 
     AndVersionPresenter() {
-        this.mClient = new OkHttpClient();
         this.parsedContentModel = new ParsedContentModel();
     }
 
@@ -157,16 +156,21 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
             @NonNull String url,
             @Nullable final OnCompletedListener completedListener,
             @NonNull final IServerResponseListener serverResponseListener ) throws IOException {
-
         try {
 
             this.mCompletedListener = completedListener;
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            if( BuildConfig.DEBUG ){
+                builder.addNetworkInterceptor( new StethoInterceptor() );
+            }
+
+            OkHttpClient client = builder.build();
             Request request = new Request.Builder()
                     .url( url )
                     .build();
 
-
-            mClient.newCall( request ).enqueue( new Callback() {
+            client.newCall( request ).enqueue( new Callback() {
                 @Override
                 public void onFailure( @NonNull Call call, @NonNull IOException e ) {
                     activity.runOnUiThread( new Runnable() {
