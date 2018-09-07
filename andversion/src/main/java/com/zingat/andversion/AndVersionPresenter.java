@@ -182,6 +182,8 @@ class AndVersionPresenter implements AndVersionContract.Presenter {
 
             // Create Request instance
             Request.Builder requestBuilder = new Request.Builder();
+            requestBuilder.addHeader( "Accept", "application/json" );
+
             if( this.header != null ){
                 for (Map.Entry<String, String> entry : this.header.entrySet()) {
                     requestBuilder.addHeader( entry.getKey(), entry.getValue() );
