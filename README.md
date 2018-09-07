@@ -13,13 +13,22 @@
   </a>
 </p>
 
-Andversion is a powerful system for displaying dialogs about updating in Android applications.
+Andversion is a powerful system for displaying dialogs about releases notes in Android.
 
-Andversion takes care of shows 'What's new' dialog automaticly, so you don't have to. It will load json file from the network then compares with local storage, and display a dialog if it is neccessary. It has two levels of scenariro; one in forceUpdate and another in only shows version update contents.
+Andversion takes care of shows **What's new** dialog automaticly, so you don't have to. 
+It will load json file from the network then compares `CurrentVersion` and `MinVersion` with local storage that are saved automaticly by AndVersion,
+ and displays a dialog if it is neccessary. 
+It has two levels of scenario; first one is `forceUpdate` and another one is `checkNews`.
 
-Andversion is a public library that is written by Zingat Android Team. Fetches a json file from defined url and the library behaves based on the data in the json file. Andversion automatically saves last app version to local database and compares the version numbers that is fetched from json file. When the developer upgrade to version number, Andversion automaticly shows a dialog that is shows the Last News about app.
+Andversion is a public library that is written by Zingat Android Team.
+These instructions will help you to set up your development environment. 
 
-Second feature is about force update. Force update feature can be arranged from json file again. When developer upgrade the app version on Json file, forceUpdate variable can be changed as boolean. If it is true Andversion force user to update the app by sending to Google play.
+If you want to help developing the app take a look to the contribution guidelines.
+
+Request to a json file from url that is defined in app and the library behaves based on the data in the json file. 
+Andversion automatically saves last app version to local database and compares the version numbers with json file. 
+When the developer upgrade to version number, Andversion automaticly shows a dialog that is shows the Last News about app.
+
 
 > This library uses [Material Dialog Library](https://github.com/afollestad/material-dialogs).
 Thank you [Aidan Follestad](https://github.com/afollestad)
@@ -63,15 +72,24 @@ Add **INTERNET** and **ACCESS_NETWORK_STATE** permissions to your app's Manifest
 }
 
 ```
-**CurrentVersion :** Your App's version code on Google Play. The value should be integer.
+**CurrentVersion :** 
+Your App's version code on Google Play. 
+The value should be integer. 
 
-**MinVersion :** The lowest version code that you want to support. The value should be integer. If user's version is lower than **MinVersion**, AndVersion applies **forceupdate** protocol.
+**MinVersion :** 
+The lowest version code that you want to support. 
+The value should be integer. 
+If user's version is lower than **MinVersion**, AndVersion applies **forceupdate** protocol.
 
-**WhatsNew :** The list of new features to show to the user. The values should be also a json object. It allows you to present new features of your application to user in different languages.
+**WhatsNew :** 
+The list of new features to show to the user. 
+The values should be also a json object. 
+It allows you to present new features of your application to user in different languages.
 
 ### ANDVERSION IMPLEMENTATION
 
-There are two way to implement AndVersion. You can check update and news separately using two methods or you can check all of them using a single method.
+There are two way to implement AndVersion. 
+You can check update and news separately using two methods or you can check all of them using a single method.
 
 #### INITIALIZE
 
@@ -86,7 +104,8 @@ Integrating with Andversion is intended to be seamless and straightforward for m
 
 }
 ```
-To define URL and Http headers in Application class provides that they are defined only once during app lifecycle. See below for specific details on individual subsystems.
+To define URL and Http headers in Application class provides that they are defined only once during app lifecycle. 
+See below for specific details on individual subsystems.
 
 **Andversion_url** means the url where you keep the JSON file, like http://andversion.com/sample/demoAndroid.json.
 

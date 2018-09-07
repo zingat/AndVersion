@@ -86,9 +86,9 @@ public class AndVersion implements AndVersionContract.View {
      *
      * @return Self
      */
-    public AndVersion checkNews() {
+    public AndVersion checkNews( @Nullable OnCompletedListener completedListener ) {
         try {
-            this.mPresenter.getJsonFromUrl(null, new IServerResponseListener() {
+            this.mPresenter.getJsonFromUrl(completedListener, new IServerResponseListener() {
                 @Override
                 public void onParsedData( final ParsedContentModel content ) {
                     activity.runOnUiThread( new Runnable() {
@@ -101,6 +101,7 @@ public class AndVersion implements AndVersionContract.View {
             } );
         } catch ( IOException e ) {
             e.printStackTrace();
+            
         }
 
         return this;
@@ -108,7 +109,7 @@ public class AndVersion implements AndVersionContract.View {
 
     /**
      * Make work the helper methods respectively
-     * {@link AndVersion#checkForceUpdate(OnCompletedListener)} and {@link AndVersion#checkNews()}
+     * {@link AndVersion#checkForceUpdate(OnCompletedListener)} and {@link AndVersion#checkNews(OnCompletedListener)}
      *
      * @param completedListener Listener that provides to allow to user to resume app after dialog operations.
      * @return Self
