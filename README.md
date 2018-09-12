@@ -5,7 +5,7 @@
 
 <p align="center">
   
-  <a href="https://bintray.com/zingatmobil/AndVersion/andversion/1.0.0">
+  <a href="https://bintray.com/zingatmobil/AndVersion/andversion/1.3.2">
     <img src="https://api.bintray.com/packages/zingatmobil/AndVersion/andversion/images/download.svg">
   </a>
   <a target="_blank" href="https://android-arsenal.com/api?level=14">
@@ -17,7 +17,7 @@ Andversion is a powerful system for displaying dialogs about releases notes in A
 
 Andversion takes care of shows **What's new** dialog automaticly, so you don't have to. 
 It will load json file from the network then compares `CurrentVersion` and `MinVersion` with local storage that are saved automaticly by AndVersion,
- and displays a dialog if it is neccessary. 
+ and displays dialog if it is neccessary. 
 It has two levels of scenario; first one is `forceUpdate` and another one is `checkNews`.
 
 Andversion is a public library that is written by Zingat Android Team.
@@ -25,32 +25,43 @@ These instructions will help you to set up your development environment.
 
 If you want to help developing the app take a look to the contribution guidelines.
 
-Request to a json file from url that is defined in app and the library behaves based on the data in the json file. 
-Andversion automatically saves last app version to local database and compares the version numbers with json file. 
-When the developer upgrade to version number, Andversion automaticly shows a dialog that is shows the Last News about app.
-
-
 > This library uses [Material Dialog Library](https://github.com/afollestad/material-dialogs).
 Thank you [Aidan Follestad](https://github.com/afollestad)
 
-# GRADLE DEPENDENCY
-The minimum API level supported by this library is API 14.
-Add the dependency to your `build.gradle`:
+## Table of Contents
+1. [What is happening on background?](https://github.com/zingat/AndVersion/#what-is-happening-on-background)
+2. [Sample Json File](https://github.com/zingat/AndVersion/#sample-json-file)
+    1. [CurrentVersion](https://github.com/zingat/AndVersion/#currentversion-)
+    2. [MinVersion](https://github.com/zingat/AndVersion/#minversion-)
+    3. [WhatsNew](https://github.com/zingat/AndVersion/#whatsnew-)
+3. [Gradle Dependency](https://github.com/zingat/AndVersion/#gradle-dependency)   
+4. [Usage](https://github.com/zingat/AndVersion/#usage)   
+    1. [Andversion Implementation](https://github.com/zingat/AndVersion/#andversion-implementation)
+    2. [Initiliaze](https://github.com/zingat/AndVersion/#initiliaze)
+    3. [Calling Method Seperately](https://github.com/zingat/AndVersion/#calling-method-seperately)
+        1. [checkForceUpdate()](https://github.com/zingat/AndVersion/#checkForceUpdate)
+        2. [checkNews()](https://github.com/zingat/AndVersion/#checkNews)
+    4. [Calling a single method for every conditions](https://github.com/zingat/AndVersion/#calling-a-single-method-for-every-conditions)     
+        1. [checkUpdate](https://github.com/zingat/AndVersion/#checkUpdate)   
+    5. [Customize title and button texts](https://github.com/zingat/AndVersion/#customize-title-and)      
 
-```Gradle
-dependencies {
-    compile 'com.zingat:andversion:1.3.0'
-}
-```
+## What is happening on background?
+First time your app open, AndVersion checks whether `currentVersionNumber` saved to `SharedPreferences` or not.
+If it can't find a saved `currentVersionNumber`, AndVersion saves your app version to `SharedPreferences` automaticly.
 
-# USAGE
-Add **INTERNET** and **ACCESS_NETWORK_STATE** permissions to your app's Manifest:
-```xml
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-```
+When you call one of public AndVersion methods for example `checkUpdate(OnCompletedListener listener)`, AndVersion sends a request to defined url that you write in `setUri(String uri)`method and handle a json data.
+Then AndVersion parse the result, and compares version already saved in `SharedPreferences` and `CurrentVersion`.
 
-### SAMPLE JSON FILE
+* If your app version is smaller than `MinVersion` it shows a dialog that is written last updates and users can't continue without update the app.
+* If your app version is bigger or equal than `MinVersion`, AndVersion continue process don't do anything.
+* Now AndVersion compares your app version and saved `currentVersionNumber` value.
+    * If your app version is bigger than `currentVersionNumber` it means you update the app and it looks the `CurrentVersionNumber` comes from server. 
+    If your app version and `CurrentVersion` values are equals it means the user is using the app after own app was updated.
+    Then AndVersion shows what is new Dialogs.
+    
+**All process is managed by AndVersion and you should only update your Json file on server when you update your app. AndVersion checks everyting instead of you decides to show what's new dialog.**
+
+## Sample Json File
 ```json
 {
   "AndVersion": {
@@ -70,28 +81,45 @@ Add **INTERNET** and **ACCESS_NETWORK_STATE** permissions to your app's Manifest
     }
   }
 }
-
 ```
-**CurrentVersion :** 
+#### CurrentVersion :
 Your App's version code on Google Play. 
 The value should be integer. 
 
-**MinVersion :** 
+#### MinVersion :
 The lowest version code that you want to support. 
 The value should be integer. 
 If user's version is lower than **MinVersion**, AndVersion applies **forceupdate** protocol.
 
-**WhatsNew :** 
+#### WhatsNew : 
 The list of new features to show to the user. 
 The values should be also a json object. 
-It allows you to present new features of your application to user in different languages.
+It allows you to present new features of your application to user in different languages.     
 
-### ANDVERSION IMPLEMENTATION
+
+## Gradle Dependency
+The minimum API level supported by this library is API 14.
+Add the dependency to your `build.gradle`:
+
+```Gradle
+dependencies {
+    compile 'com.zingat:andversion:1.3.2'
+}
+```
+
+## USAGE
+Add **INTERNET** and **ACCESS_NETWORK_STATE** permissions to your app's Manifest:
+```xml
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+```
+
+### Andversion Implementation
 
 There are two way to implement AndVersion. 
 You can check update and news separately using two methods or you can check all of them using a single method.
 
-#### INITIALIZE
+### Initiliaze
 
 Integrating with Andversion is intended to be seamless and straightforward for most existing Android applications. There is a simple initialization step which occurs in your Application class:
 ```java
@@ -109,13 +137,14 @@ See below for specific details on individual subsystems.
 
 **Andversion_url** means the url where you keep the JSON file, like http://andversion.com/sample/demoAndroid.json.
 
-#### CALLING METHODS SEPARATELY
+### Calling Method Seperately
 
 **Note :** Every time you have to set `setActivity( this )`method to show dialog successfully in Activity or Fragment.
 
-**checkForceUpdate() :** This method controls that user version code is smaller than minimum version in JSON file.
+#### checkForceUpdate()
+This method controls that user version code is smaller than minimum version in JSON file.
 
-If yes the force update dialog will be displayed. If no or there was an error onCompleted method will be called.
+If true the force update dialog will be displayed, If false `OnCompletedListener.onCompleted()` works.
 
 ```java
 @Override
@@ -146,10 +175,11 @@ Add closeDialog() method in onPause() method.
                 .closeDialog();
     }
 ```
-#### Sample Screenshot for force update dialog.
+**Sample Screenshot for force update dialog.**
 ![Screenshots](https://raw.githubusercontent.com/zingat/andversion/dev/art/forceUpdateShowcase.png)
 
-**checkNews() :** This method is used for showing information dialog after update. Information dialog will be displayed only once after every update.
+#### checkNews()
+This method is used for showing information dialog after update. Information dialog will be displayed only once after every update.
 
 ```java
 @Override
@@ -164,13 +194,14 @@ Add closeDialog() method in onPause() method.
 ```
 The suggestion is to call this method in main screen.
 
-#### Sample Screenshot for whats new dialog.
+**Sample Screenshot for whats new dialog**
 ![Screenshots](https://raw.githubusercontent.com/zingat/andversion/dev/art/whatsNewShowcase.png)
 
-#### CALLING A SINGLE METHOD
+### Calling a single method for every conditions
 
-**checkUpdate() :** First of all you also initialze Andversion before call **checkUpdate()** method.
-checkUpdate() method contains both behaviours of **checkNews()** and **checkForceUpdate()** methods.
+#### checkUpdate() 
+First of all you also initialze Andversion before call `checkUpdate()` method.
+`checkUpdate()` method contains both behaviours of `checkNews()` and `checkForceUpdate()` methods.
 
 First it checks force update conditions by checking the app version that is defined by user in gradle file and min version in json file.  
 If it not shown a force dialog second step is to check the news. Then app can resume.
@@ -195,7 +226,7 @@ If it not shown a force dialog second step is to check the news. Then app can re
 ```
 The suggestion is to call this method in splash screen. 
 
-#### CUSTOMIZE TITLE AND BUTTONS TEXT
+### Customize title and button texts
 
 To customize dialog title and buttons text add the following xml codes in your app strings.xml.
 
