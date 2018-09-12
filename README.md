@@ -1,11 +1,10 @@
 ﻿<p align="center">
-  <img align="middle" src="https://raw.githubusercontent.com/zingat/andversion/dev/art/andversionLogo.png">
+  <img align="middle" src="https://raw.githubusercontent.com/zingat/andversion/art/andversionLogo.png">
 </p>
-
 
 <p align="center">
   
-  <a href="https://bintray.com/zingatmobil/AndVersion/andversion/1.3.2">
+  <a href="https://bintray.com/zingatmobil/AndVersion/andversion/1.4.0">
     <img src="https://api.bintray.com/packages/zingatmobil/AndVersion/andversion/images/download.svg">
   </a>
   <a target="_blank" href="https://android-arsenal.com/api?level=14">
@@ -238,4 +237,4 @@ To customize dialog title and buttons text add the following xml codes in your a
 <string name="andversion_ok">Ok</string>
 ```
 
-<img align="right" src="https://raw.githubusercontent.com/zingat/andversion/dev/art/zingatLogo.png" width="320">
+<img align="right" src="https://raw.githubusercontent.com/zingat/andversion/art/zingatLogo.png" width="320">
